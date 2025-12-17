@@ -1,28 +1,10 @@
-FROM debian:12-slim
+FROM httpd:latest
 
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    apache2 \
-    apache2-utils \
-    libapache2-mod-fcgid \
-    procps \
-    curl \
-    ca-certificates \
-    vim \
-    && rm -rf /var/lib/apt/lists/*
-
-
-RUN a2enmod proxy proxy_fcgi rewrite headers mime setenvif expires
-
-COPY ./.docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
-RUN ln -sf /proc/self/fd/1 /var/log/apache2/access.log \
-    && ln -sf /proc/self/fd/1 /var/log/apache2/error.log
-
-RUN mkdir -p /var/www/html 
-
-WORKDIR /var/www/html
-
-EXPOSE 80
-
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# 1. Habilitamos los módulos necesarios para PHP y reescritura de URLs (Laravel)
+# 2. Habilitamos la inclusión de archivos de configuración extra
+RUN sed -i \
+    -e 's/^#\(LoadModule proxy_module modules\/mod_proxy.so\)/\1/' \
+    -e 's/^#\(LoadModule proxy_fcgi_module modules\/mod_proxy_fcgi.so\)/\1/' \
+    -e 's/^#\(LoadModule rewrite_module modules\/mod_rewrite.so\)/\1/' \
+    -e 's/^#\(Include conf\/extra\/httpd-vhosts.conf\)/\1/' \
+    conf/httpd.conf
