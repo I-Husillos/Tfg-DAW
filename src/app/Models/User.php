@@ -78,10 +78,10 @@ class User extends Authenticatable
         return $this->hasMany(Import::class);
     }
 
-    public function aiQueries(): HasMany
-    {
-        return $this->hasMany(AiQuery::class);
-    }
+    // public function aiQueries(): HasMany
+    // {
+    //     return $this->hasMany(AiQuery::class);
+    // }
 
     public function auditLogs(): HasMany
     {
