@@ -38,9 +38,6 @@ RUN docker-php-ext-configure zip \
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache || true
-
 COPY ./.docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["php-fpm"]

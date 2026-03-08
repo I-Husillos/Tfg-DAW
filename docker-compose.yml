@@ -11,7 +11,8 @@ services:
     - service-redis
     networks:
     - ${DOCKER_NETWORK}
-    command: sh -c "chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && php-fpm"
+    user: "1000:1000" # Asegura que el contenedor se ejecute con el mismo UID y GID que tu usuario local
+    command: sh -c "php-fpm"
 
 
   service-apache:

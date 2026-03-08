@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            // NULL = categoría global del sistema, con valor = categoría del usuario
             $table->foreignId('user_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
-            $table->string('name');
-            $table->enum('type', ['income', 'expense']);
+                    ->nullable()
+                    ->constrained()
+                    ->nullOnDelete();
+            // Self-referential para jerarquía (subcategorías)
             $table->foreignId('parent_id')
-                ->nullable()
-                ->constrained('categories')
-                ->nullOnDelete();
+                    ->nullable()
+                    ->constrained('categories')
+                    ->nullOnDelete();
+            $table->string('name', 120);
+            $table->enum('type', ['income', 'expense']);
             $table->timestamps();
         });
     }

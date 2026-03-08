@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->string('name');
-            $table->enum('type', ['bank', 'cash', 'credit', 'other']);
-            $table->char('currency', 3);
-            $table->decimal('initial_balance', 15, 2);
-            $table->decimal('current_balance', 15, 2);
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('name', 150);
+            $table->enum('type', ['bank', 'cash', 'credit', 'other'])->default('bank');
+            $table->char('currency', 3)->default('EUR');
+            $table->decimal('initial_balance', 15, 2)->default(0.00);
+            $table->decimal('current_balance', 15, 2)->default(0.00);
+            // current_balance se actualiza via DB transaction al crear/editar/eliminar movimientos
             $table->timestamps();
         });
     }

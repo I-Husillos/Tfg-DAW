@@ -17,8 +17,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->string('action');
-            $table->string('model');
+            $table->string('action', 100);
+            $table->string('model', 100);
             $table->unsignedBigInteger('model_id');
             $table->json('diff')->nullable();
             $table->ipAddress('ip_address')->nullable();

@@ -8,6 +8,7 @@ class Category extends Model
 {
     protected $fillable = [
         'user_id',
+        'parent_id',
         'name',
         'type',
     ];
@@ -22,4 +23,18 @@ class Category extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
 }

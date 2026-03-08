@@ -31,7 +31,7 @@ return new class extends Migration
             $table->decimal('amount', 15, 2);
             $table->char('currency', 3);
             $table->dateTime('date');
-            $table->string('merchant')->nullable();
+            $table->string('merchant', 150)->nullable();
             $table->text('description')->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();

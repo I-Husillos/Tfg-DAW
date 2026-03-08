@@ -8,9 +8,16 @@ class Account extends Model
 {
     protected $fillable = [
         'user_id',
-        'name',
+        'account_id',
+        'category_id',
+        'import_id',
         'type',
-        'initial_balance',
+        'amount',
+        'currency',
+        'date',
+        'merchant',
+        'description',
+        'meta',
     ];
 
     public function user()
@@ -18,8 +25,18 @@ class Account extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function transactions()
+    public function category()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->belongsTo(Category::class);
+    }
+
+    public function import()
+    {
+        return $this->belongsTo(Import::class);
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
     }
 }
