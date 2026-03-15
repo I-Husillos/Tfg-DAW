@@ -3,33 +3,25 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@smartbudget.test',
+        $user = User::create([
+            'username' => 'smartbudget',
+            'email'    => 'user@smartbudget.test',
             'password' => Hash::make('password'),
-            'role' => 'admin',
-            'timezone' => 'Europe/Madrid',
-            'currency' => 'EUR',
         ]);
 
-        User::create([
-            'name' => 'Usuario Demo',
-            'email' => 'user@smartbudget.test',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'timezone' => 'Europe/Madrid',
+        Profile::create([
+            'user_id'  => $user->id,
             'currency' => 'EUR',
+            'language' => 'es',
+            'timezone' => 'Europe/Madrid',
         ]);
     }
 }

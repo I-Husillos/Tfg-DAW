@@ -2,91 +2,70 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    // Sin 'role', 'timezone', 'currency': esos campos
+    // ya no existen en users. Las preferencias viven
+    // en profiles. No hay roles en monousuario.
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
-        'role',
-        'timezone',
-        'currency',
     ];
 
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
-    public function isAdmin(): bool
+    // Relación 1:1 con profiles.
+    // hasOne porque un usuario tiene exactamente
+    // un perfil, nunca más de uno.
+    public function profile(): HasOne
     {
-        return $this->role === 'admin';
+        return $this->hasOne(Profile::class);
     }
 
-    public function accounts(): HasMany
-    {
-        return $this->hasMany(Account::class);
-    }
-
+    // Un usuario tiene muchas categorías.
+    // En monousuario siempre serán las suyas.
     public function categories(): HasMany
     {
         return $this->hasMany(Category::class);
     }
 
+    // Un usuario tiene muchas transacciones.
+    // Toda la actividad financiera pasa por aquí.
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
+    // Un usuario tiene muchos presupuestos.
+    // Uno por categoría y período mensual.
     public function budgets(): HasMany
     {
         return $this->hasMany(Budget::class);
     }
 
-    public function imports(): HasMany
-    {
-        return $this->hasMany(Import::class);
-    }
-
-    // public function aiQueries(): HasMany
-    // {
-    //     return $this->hasMany(AiQuery::class);
-    // }
-
+    // Un usuario tiene muchos registros de auditoría.
+    // Se generan automáticamente al editar o eliminar
+    // transacciones, presupuestos y categorías.
     public function auditLogs(): HasMany
     {
         return $this->hasMany(AuditLog::class);

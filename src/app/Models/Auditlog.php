@@ -3,23 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Auditlog extends Model
+class AuditLog extends Model
 {
+    use HasFactory;
 
+    // Tabla append-only: solo se inserta, nunca
+    // se actualiza ni se borra un registro existente.
     protected $fillable = [
-        'user_id',
         'action',
         'model',
         'model_id',
         'diff',
-        'ip_address',
-        'user_agent',
     ];
 
-    public function user(): BelongsTo
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class);
+        return [
+            'diff' => 'array',
+        ];
     }
+
+    // No tiene relación directa con User porque en monousuario siempre es el mismo usuario.
+    // No necesita FK para saber de quién es el log.
 }
