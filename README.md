@@ -39,7 +39,30 @@ El proyecto es una aplicación web desarrollada con el framework Laravel, utiliz
     docker compose run --rm service-composer install
     ```
 
-4.  **Configurar el archivo de entorno:**
+4.  **Instalar dependencias frontend (Node/Vite):**
+    Las dependencias necesarias (incluyendo `datatables`, `jquery` y `chart.js`) ya están declaradas en `src/package.json` y bloqueadas en `src/package-lock.json`, por lo que no hace falta ejecutar instalaciones manuales de paquetes uno a uno.
+    ```bash
+    docker compose exec service-php npm ci
+    ```
+
+    No es necesario ejecutar manualmente comandos como:
+    ```bash
+    npm install --legacy-peer-deps datatables.net datatables.net-bs4 datatables.net-responsive datatables.net-responsive-bs4 jquery chart.js
+    npm install --legacy-peer-deps jquery@3.7.1
+    ```
+    Esos paquetes ya se instalan automáticamente con `npm ci`.
+
+    Si prefieres desarrollo con recarga en caliente:
+    ```bash
+    docker compose exec service-php npm run dev -- --host
+    ```
+
+    Si prefieres compilar assets para producción:
+    ```bash
+    docker compose exec service-php npm run build
+    ```
+
+5.  **Configurar el archivo de entorno:**
     Copia el archivo de ejemplo `.env.example` que se encuentra en `src/` y genera la clave de la aplicación.
     ```bash
     docker compose exec service-php cp .env.example .env
@@ -80,7 +103,7 @@ Después de copiar `src/.env.example` a `src/.env`, deberás ajustar algunas var
 
 Asegúrate de que los valores de `DOCKER_MYSQL_DATABASE`, `DOCKER_MYSQL_USER`, y `DOCKER_MYSQL_PASSWORD` en tu archivo `.env` principal (el del directorio raíz del proyecto) coincidan con los que uses en el `src/.env` de Laravel.
 
-5.  **Ejecutar las migraciones:**
+6.  **Ejecutar las migraciones:**
     Para crear la estructura inicial de la base de datos.
     ```bash
     docker compose exec service-php php artisan migrate
