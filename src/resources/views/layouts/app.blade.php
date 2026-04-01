@@ -117,6 +117,7 @@
     </div>
 
     @stack('scripts')
+    @include('partials.ai-chat-widget')
 </body>
 
 </html>

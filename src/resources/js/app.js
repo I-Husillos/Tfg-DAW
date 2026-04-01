@@ -31,6 +31,7 @@ import { initCategoriesTable }   from './tables/categories-table';
 import { initBudgetsTable }      from './tables/budgets-table';
 import { initReportsCharts }     from './charts/reports-charts';
 import { initCategorySelect } from './selects/category-select';
+import { initAiChat } from './chat/ai-chat';
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -58,4 +59,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     initCategorySelect();
+    initAiChat();
 });

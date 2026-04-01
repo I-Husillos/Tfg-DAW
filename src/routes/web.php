@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AiController;
 use Illuminate\Support\Facades\Route;
 
 //  Rutas públicas 
@@ -103,4 +104,7 @@ Route::middleware('auth')->group(function () {
         ->name('reports.index');
     Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])
         ->name('reports.export.pdf');
+
+    Route::post('/ai/ask', [AiController::class, 'ask'])->name('ai.ask');
+    Route::post('/ai/clear', [AiController::class, 'clear'])->name('ai.clear');
 });

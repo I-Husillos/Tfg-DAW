@@ -21,7 +21,22 @@
     </div>
     <div class="card-body">
 
-        {{-- Filtros — misma estructura que tickets --}}
+        {{--
+            Filtros de la tabla.
+
+            Distribución en md (≥768px):
+              Tipo       col-md-2  → 2
+              Categoría  col-md-3  → 3
+              Desde      col-md-2  → 2
+              Hasta      col-md-2  → 2
+              Moneda     col-md-2  → 2
+              Limpiar    col-md-1  → 1
+                                  ─────
+                                   12 ✓
+
+            En sm/xs cada filtro ocupa col-sm-6 o col-12,
+            por lo que se apila en dos columnas en móvil.
+        --}}
         <div class="row mb-3">
             <div class="col-md-2 col-sm-6 mb-2">
                 <select id="filter-type" class="form-control">
@@ -56,9 +71,15 @@
                     <option value="GBP">GBP — Libra</option>
                 </select>
             </div>
-            <div class="col-md-3 col-sm-6 mb-2">
+            {{--
+                col-md-1: suficiente para el icono en escritorio.
+                col-sm-6: en móvil ocupa media fila para alinearse
+                          con el filtro de moneda de arriba.
+            --}}
+            <div class="col-md-1 col-sm-6 mb-2">
                 <button id="clear-filters" class="btn btn-secondary btn-block">
-                    <i class="fas fa-times mr-1"></i> Limpiar filtros
+                    <i class="fas fa-times"></i>
+                    <span class="d-none d-lg-inline ml-1">Limpiar</span>
                 </button>
             </div>
         </div>

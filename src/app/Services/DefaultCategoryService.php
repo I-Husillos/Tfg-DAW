@@ -7,16 +7,8 @@ use App\Models\User;
 
 /**
  * DefaultCategoryService
- *
- * Única responsabilidad: crear el conjunto de categorías
+ * Crea el conjunto de categorías
  * predeterminadas para un usuario recién registrado.
- *
- * Por qué en un servicio y no en el controlador:
- *   - El controlador solo debe orquestar: recibir la
- *     petición, validarla y devolver la respuesta.
- *   - La lógica de "qué categorías existen por defecto"
- *     puede evolucionar (añadir, quitar, traducir) sin
- *     tocar el flujo de registro.
  */
 class DefaultCategoryService
 {
@@ -24,12 +16,10 @@ class DefaultCategoryService
      * Crea las categorías predeterminadas para un usuario.
      *
      * @param  User  $user  El usuario recién creado.
-     * @return void
      */
     public function createFor(User $user): void
     {
-        // Cada entrada del array es un array con los
-        // campos que necesita el modelo Category.
+        // ── Categorías de ingreso ─────────────────────────────────
         $incomeCategories = [
             ['name' => 'Salario',          'display_name' => 'Salario'],
             ['name' => 'Freelance',        'display_name' => 'Freelance'],
@@ -47,73 +37,62 @@ class DefaultCategoryService
             ]);
         }
 
+        // ── Categorías de gasto ───────────────────────────────────
+        //
+        // Guardamos en variables las que tendrán subcategorías.
+        // Category::create() devuelve el modelo con el ID ya
+        // asignado por la BD, por lo que no hace falta volver
+        // a consultarlas. Esto elimina 2 queries innecesarias.
         $expenseCategories = [
-            ['name' => 'Alimentación', 'display_name' => 'Alimentación'],
-            ['name' => 'Transporte',   'display_name' => 'Transporte'],
-            ['name' => 'Vivienda',     'display_name' => 'Vivienda'],
-            ['name' => 'Salud',        'display_name' => 'Salud'],
-            ['name' => 'Educación',    'display_name' => 'Educación'],
-            ['name' => 'Ocio',         'display_name' => 'Ocio y entretenimiento'],
-            ['name' => 'Ropa',         'display_name' => 'Ropa y calzado'],
-            ['name' => 'Tecnología',   'display_name' => 'Tecnología'],
-            ['name' => 'Seguros',      'display_name' => 'Seguros'],
-            ['name' => 'Otros gastos', 'display_name' => 'Otros gastos'],
+            'Alimentación' => ['display_name' => 'Alimentación',          'has_children' => false],
+            'Transporte'   => ['display_name' => 'Transporte',            'has_children' => true],
+            'Vivienda'     => ['display_name' => 'Vivienda',              'has_children' => true],
+            'Salud'        => ['display_name' => 'Salud',                 'has_children' => false],
+            'Educación'    => ['display_name' => 'Educación',             'has_children' => false],
+            'Ocio'         => ['display_name' => 'Ocio y entretenimiento','has_children' => false],
+            'Ropa'         => ['display_name' => 'Ropa y calzado',        'has_children' => false],
+            'Tecnología'   => ['display_name' => 'Tecnología',            'has_children' => false],
+            'Seguros'      => ['display_name' => 'Seguros',               'has_children' => false],
+            'Otros gastos' => ['display_name' => 'Otros gastos',          'has_children' => false],
         ];
 
-        foreach ($expenseCategories as $data) {
-            Category::create([
+        // Guardamos los modelos de las categorías padre que
+        // necesitaremos para enlazar sus subcategorías.
+        $parents = [];
+
+        foreach ($expenseCategories as $name => $meta) {
+            $category = Category::create([
                 'user_id'      => $user->id,
-                'name'         => $data['name'],
-                'display_name' => $data['display_name'],
+                'name'         => $name,
+                'display_name' => $meta['display_name'],
                 'type'         => 'expense',
+            ]);
+
+            // Solo guardamos referencia si tiene hijos.
+            // Así el array $parents es pequeño y claro.
+            if ($meta['has_children']) {
+                $parents[$name] = $category;
+            }
+        }
+
+        // ── Subcategorías de Transporte ───────────────────────────
+        foreach (['Gasolina', 'Transporte público', 'Parking', 'Mantenimiento vehículo'] as $nombre) {
+            Category::create([
+                'user_id'   => $user->id,
+                'parent_id' => $parents['Transporte']->id,
+                'name'      => $nombre,
+                'type'      => 'expense',
             ]);
         }
 
-        // Necesitamos el ID del padre para enlazarlas.
-        // firstWhere busca en la colección en memoria
-        // (más eficiente que otra query a la BD).
-        $transporte = Category::where('user_id', $user->id)
-            ->where('name', 'Transporte')
-            ->first();
-
-        if ($transporte) {
-            $subcats = [
-                'Gasolina',
-                'Transporte público',
-                'Parking',
-                'Mantenimiento vehículo',
-            ];
-
-            foreach ($subcats as $nombre) {
-                Category::create([
-                    'user_id'   => $user->id,
-                    'parent_id' => $transporte->id,
-                    'name'      => $nombre,
-                    'type'      => 'expense',
-                ]);
-            }
-        }
-
-        $vivienda = Category::where('user_id', $user->id)
-            ->where('name', 'Vivienda')
-            ->first();
-
-        if ($vivienda) {
-            $subcats = [
-                'Alquiler',
-                'Hipoteca',
-                'Suministros',
-                'Comunidad',
-            ];
-
-            foreach ($subcats as $nombre) {
-                Category::create([
-                    'user_id'   => $user->id,
-                    'parent_id' => $vivienda->id,
-                    'name'      => $nombre,
-                    'type'      => 'expense',
-                ]);
-            }
+        // ── Subcategorías de Vivienda ─────────────────────────────
+        foreach (['Alquiler', 'Hipoteca', 'Suministros', 'Comunidad'] as $nombre) {
+            Category::create([
+                'user_id'   => $user->id,
+                'parent_id' => $parents['Vivienda']->id,
+                'name'      => $nombre,
+                'type'      => 'expense',
+            ]);
         }
     }
 }

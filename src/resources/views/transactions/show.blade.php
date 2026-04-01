@@ -30,10 +30,22 @@
         <dl class="row">
             <dt class="col-sm-3">Importe</dt>
             <dd class="col-sm-9">
+                {{--
+                    Mostramos la moneda con esta jerarquía:
+                    1. Moneda preferida del perfil del usuario  → user_currency()
+                    2. Moneda con la que se guardó la transacción → $transaction->currency
+                    3. EUR como último fallback
+
+                    ¿Por qué esta jerarquía?
+                    Si el usuario ha configurado USD en su perfil, es porque
+                    trabaja en esa moneda y quiere verla así. Si por algún motivo
+                    no tiene perfil (caso muy raro), usamos la moneda de la
+                    transacción, que es la que se guardó realmente en BD.
+                --}}
                 <strong class="text-{{ $transaction->type === 'income' ? 'success' : 'danger' }} h5">
                     {{ $transaction->type === 'income' ? '+' : '-' }}
                     {{ number_format($transaction->amount, 2, ',', '.') }}
-                    {{ auth()->user()?->profile?->currency ?? $transaction->currency ?? 'EUR' }}
+                    {{ user_currency() }}
                 </strong>
             </dd>
 
@@ -61,6 +73,21 @@
             <dt class="col-sm-3">Descripción</dt>
             <dd class="col-sm-9">{{ $transaction->description }}</dd>
             @endif
+
+            <dt class="col-sm-3">Moneda original</dt>
+            <dd class="col-sm-9">
+                {{--
+                    Si la moneda guardada en BD difiere de la moneda
+                    del perfil, lo indicamos para que el usuario sepa
+                    que esa transacción se registró en otra moneda.
+                --}}
+                <span class="badge badge-secondary">{{ $transaction->currency }}</span>
+                @if($transaction->currency !== user_currency())
+                    <small class="text-muted ml-1">
+                        (tu moneda actual es {{ user_currency() }})
+                    </small>
+                @endif
+            </dd>
 
             <dt class="col-sm-3">Registrada el</dt>
             <dd class="col-sm-9">{{ $transaction->created_at->format('d/m/Y H:i') }}</dd>

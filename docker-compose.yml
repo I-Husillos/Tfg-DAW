@@ -88,6 +88,17 @@ services:
     networks:
     - ${DOCKER_NETWORK}
 
+  service-ollama:
+    container_name: service-ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"   # Puerto por defecto de Ollama
+    volumes:
+      - ./.docker/volumes/ollama:/root/.ollama   # Persistir modelos
+    networks:
+      - ${DOCKER_NETWORK}
+    command: serve
+
 
 networks:
   red-app:

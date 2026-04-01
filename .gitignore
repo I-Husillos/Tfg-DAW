@@ -1,3 +1,6 @@
 # Docker volumes / DB artefacts
 .docker/volumes/mysql-data/
 .docker/volumes/mysql-data/*
+# Ollama AI volumes
+.docker/volumes/ollama/
+.docker/volumes/ollama/*
