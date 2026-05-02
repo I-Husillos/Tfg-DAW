@@ -42,12 +42,12 @@ class StoreCategoryRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El nombre de la categoría es obligatorio.',
-            'name.max'      => 'El nombre no puede tener más de 120 caracteres.',
-            'name.unique'   => 'Ya tienes una categoría con ese nombre.',
-            'type.required' => 'El tipo es obligatorio.',
-            'type.in'       => 'El tipo debe ser ingreso o gasto.',
-            'parent_id.exists' => 'La categoría padre seleccionada no existe.',
+            'name.required' => __('app.val_category_name_required'),
+            'name.max'      => __('app.val_category_name_max'),
+            'name.unique'   => __('app.val_category_name_unique'),
+            'type.required' => __('app.val_category_type_required'),
+            'type.in'       => __('app.val_category_type_in'),
+            'parent_id.exists' => __('app.val_category_parent_exists'),
         ];
     }
 }

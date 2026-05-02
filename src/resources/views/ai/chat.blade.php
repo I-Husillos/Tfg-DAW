@@ -1,10 +1,12 @@
 @extends('layouts.app')
 
+@section('title', __('app.ai_title'))
+
 @section('content')
 <div class="content-wrapper">
     <div class="content-header">
         <div class="container-fluid">
-            <h1 class="m-0">Asistente Financiero IA</h1>
+            <h1 class="m-0">{{ __('app.ai_title') }}</h1>
         </div>
     </div>
 
@@ -14,13 +16,13 @@
                 <div class="col-12">
                     <div class="card card-primary card-outline">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="card-title">Chat</h3>
+                            <h3 class="card-title">{{ __('app.ai_chat') }}</h3>
                             <button
                                 id="ai-clear-btn"
                                 type="button"
                                 class="btn btn-sm btn-danger"
                             >
-                                <i class="fas fa-trash mr-1"></i> Limpiar chat
+                                <i class="fas fa-trash mr-1"></i> {{ __('app.ai_clear') }}
                             </button>
                         </div>
 
@@ -39,7 +41,7 @@
                                 @empty
                                     <p id="ai-empty-state" class="text-muted text-center mt-5">
                                         <i class="fas fa-comments fa-2x mb-2 d-block"></i>
-                                        Escribe tu primera pregunta.
+                                        {{ __('app.ai_empty_state') }}
                                     </p>
                                 @endforelse
                             </div>
@@ -53,7 +55,7 @@
                                         name="message"
                                         maxlength="1500"
                                         class="form-control"
-                                        placeholder="¿En qué puedo ayudarte?"
+                                        placeholder="{{ __('app.ai_placeholder') }}"
                                     >
                                     <button id="ai-send-btn" type="submit" class="btn btn-primary ml-2">
                                         <i class="fas fa-paper-plane"></i>

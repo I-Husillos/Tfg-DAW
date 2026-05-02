@@ -42,17 +42,17 @@ class StoreTransactionRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'type.required'        => 'El tipo de transacción es obligatorio.',
-            'type.in'              => 'El tipo debe ser ingreso o gasto.',
-            'amount.required'      => 'El importe es obligatorio.',
-            'amount.numeric'       => 'El importe debe ser un número.',
-            'amount.min'           => 'El importe debe ser mayor que cero.',
-            'currency.required'    => 'La moneda es obligatoria.',
-            'currency.size'        => 'La moneda debe ser un código de 3 letras (EUR, USD…).',
-            'date.required'        => 'La fecha es obligatoria.',
-            'date.date'            => 'La fecha no tiene un formato válido.',
-            'date.before_or_equal' => 'La fecha no puede ser futura.',
-            'category_id.exists'   => 'La categoría seleccionada no existe.',
+            'type.required'        => __('app.val_type_required'),
+            'type.in'              => __('app.val_type_in'),
+            'amount.required'      => __('app.val_amount_required'),
+            'amount.numeric'       => __('app.val_amount_numeric'),
+            'amount.min'           => __('app.val_amount_min'),
+            'currency.required'    => __('app.val_currency_required'),
+            'currency.size'        => __('app.val_currency_size'),
+            'date.required'        => __('app.val_date_required'),
+            'date.date'            => __('app.val_date_date'),
+            'date.before_or_equal' => __('app.val_date_future'),
+            'category_id.exists'   => __('app.val_category_exists'),
         ];
     }
 }

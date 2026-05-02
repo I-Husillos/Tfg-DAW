@@ -44,7 +44,7 @@ class AuthController extends Controller
         }
 
         return back()
-            ->withErrors(['email' => 'Las credenciales no son correctas.'])
+            ->withErrors(['email' => __('app.invalid_credentials')])
             ->onlyInput('email');
     }
 

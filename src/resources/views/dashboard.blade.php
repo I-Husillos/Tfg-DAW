@@ -8,30 +8,29 @@
 
 @section('content')
 @if(isset($budgetAlerts) && $budgetAlerts->count() > 0)
-    <div class="row mb-3">
-        <div class="col-12">
-            @foreach($budgetAlerts as $alert)
-                <div class="alert alert-{{ $alert['exceeded'] ? 'danger' : 'warning' }} alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span>&times;</span>
-                    </button>
-                    <h5>
-                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                        @if($alert['exceeded'])
-                            Presupuesto superado: <strong>{{ $alert['category'] }}</strong>
-                        @else
-                            Alerta de presupuesto: <strong>{{ $alert['category'] }}</strong>
-                        @endif
-                    </h5>
-                    Has gastado <strong>{{ number_format($alert['spent'], 2, ',', '.') }} {{ user_currency() }}</strong>
-                    ({{ $alert['percentage'] }}%) del límite definido para este mes.
-                    <a href="{{ route('budgets.index') }}" class="alert-link ml-1">
-                        Ver presupuestos
-                    </a>
-                </div>
-            @endforeach
+<div class="row mb-3">
+    <div class="col-12">
+        @foreach($budgetAlerts as $alert)
+        <div class="alert alert-{{ $alert['exceeded'] ? 'danger' : 'warning' }} alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">
+                <span>&times;</span>
+            </button>
+            <h5>
+                <i class="fas fa-exclamation-triangle mr-1"></i>
+                @if($alert['exceeded'])
+                {{ __('app.budget_exceeded') }} <strong>{{ $alert['category'] }}</strong>
+                @else
+                {{ __('app.budget_alert_label') }} <strong>{{ $alert['category'] }}</strong>
+                @endif
+            </h5>
+            {{ __('app.spent_of_limit', ['amount' => number_format($alert['spent'], 2, ',', '.') . ' ' . user_currency(), 'pct' => $alert['percentage']]) }}
+            <a href="{{ route('budgets.index') }}" class="alert-link ml-1">
+                {{ __('app.view_budgets') }}
+            </a>
         </div>
+        @endforeach
     </div>
+</div>
 @endif
 
 {{-- Tarjetas resumen del mes --}}
@@ -41,12 +40,12 @@
         <div class="small-box bg-success">
             <div class="inner">
                 <h3>{{ number_format($totalIncome, 2, ',', '.') }} {{ user_currency() }}</h3>
-                <p>Ingresos este mes</p>
+                <p>{{ __('app.income_this_month') }}</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-up"></i></div>
             <a href="{{ route('transactions.index', ['type' => 'income']) }}"
                 class="small-box-footer">
-                Ver detalle <i class="fas fa-arrow-circle-right"></i>
+                {{ __('app.view_detail') }} <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -55,12 +54,12 @@
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3>{{ number_format($totalExpense, 2, ',', '.') }} {{ user_currency() }}</h3>
-                <p>Gastos este mes</p>
+                <p>{{ __('app.expense_this_month') }}</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-down"></i></div>
             <a href="{{ route('transactions.index', ['type' => 'expense']) }}"
                 class="small-box-footer">
-                Ver detalle <i class="fas fa-arrow-circle-right"></i>
+                {{ __('app.view_detail') }} <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -69,11 +68,11 @@
         <div class="small-box {{ $balance >= 0 ? 'bg-info' : 'bg-warning' }}">
             <div class="inner">
                 <h3>{{ number_format($balance, 2, ',', '.') }} {{ user_currency() }}</h3>
-                <p>Balance del mes</p>
+                <p>{{ __('app.balance_this_month') }}</p>
             </div>
             <div class="icon"><i class="fas fa-balance-scale"></i></div>
             <a href="{{ route('reports.index') }}" class="small-box-footer">
-                Ver informes <i class="fas fa-arrow-circle-right"></i>
+                {{ __('app.view_reports') }} <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -82,11 +81,11 @@
         <div class="small-box bg-secondary">
             <div class="inner">
                 <h3>{{ $transactionCount }}</h3>
-                <p>Transacciones este mes</p>
+                <p>{{ __('app.transactions_this_month') }}</p>
             </div>
             <div class="icon"><i class="fas fa-list-ul"></i></div>
             <a href="{{ route('transactions.index') }}" class="small-box-footer">
-                Ver todas <i class="fas fa-arrow-circle-right"></i>
+                {{ __('app.view_all') }} <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>
@@ -101,28 +100,28 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-exchange-alt mr-1"></i>
-                    Últimas transacciones
+                    {{ __('app.latest_transactions') }}
                 </h3>
                 <div class="card-tools">
                     <a href="{{ route('transactions.index') }}"
                         class="btn btn-sm btn-primary">
-                        Ver todas
+                        {{ __('app.view_all') }}
                     </a>
                 </div>
             </div>
             <div class="card-body p-0">
                 @if($latestTransactions->isEmpty())
                 <p class="text-muted text-center py-4">
-                    No hay transacciones registradas aún.
+                    {{ __('app.no_transactions_yet') }}
                 </p>
                 @else
                 <table class="table table-sm table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Descripción</th>
-                            <th>Categoría</th>
-                            <th class="text-right">Importe</th>
+                            <th>{{ __('app.col_date') }}</th>
+                            <th>{{ __('app.col_description') }}</th>
+                            <th>{{ __('app.col_category') }}</th>
+                            <th class="text-right">{{ __('app.col_amount') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,19 +155,19 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-wallet mr-1"></i>
-                    Presupuestos del mes
+                    {{ __('app.monthly_budgets') }}
                 </h3>
                 <div class="card-tools">
                     <a href="{{ route('budgets.index') }}"
                         class="btn btn-sm btn-primary">
-                        Ver todos
+                        {{ __('app.view_all') }}
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 @if($budgets->isEmpty())
                 <p class="text-muted text-center py-3">
-                    No hay presupuestos definidos para este mes.
+                    {{ __('app.no_budgets_this_month') }}
                 </p>
                 @else
                 @foreach($budgets as $budget)

@@ -23,7 +23,7 @@ class AiController extends Controller
         if (!$response) {
             return response()->json([
                 'ok'      => false,
-                'message' => 'No se pudo obtener respuesta. ¿Está Ollama activo?',
+                'message' => __('app.ollama_error'),
             ], 500);
         }
 

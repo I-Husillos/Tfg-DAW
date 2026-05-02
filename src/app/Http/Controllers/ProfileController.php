@@ -41,7 +41,7 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Perfil actualizado correctamente.');
+            ->with('success', __('app.profile_updated'));
     }
 
     // Actualiza la contraseña del usuario.
@@ -56,6 +56,6 @@ class ProfileController extends Controller
 
         return redirect()
             ->route('profile.edit')
-            ->with('success', 'Contraseña actualizada correctamente.');
+            ->with('success', __('app.password_updated'));
     }
 }

@@ -49,18 +49,18 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'El nombre de usuario es obligatorio.',
-            'username.min'      => 'El nombre de usuario debe tener al menos 3 caracteres.',
-            'username.max'      => 'El nombre de usuario no puede tener más de 50 caracteres.',
-            'username.unique'   => 'Este nombre de usuario ya está en uso.',
-            'username.regex'    => 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos.',
-            'email.required'    => 'El correo electrónico es obligatorio.',
-            'email.email'       => 'Introduce un correo electrónico válido.',
-            'email.max'         => 'El correo no puede tener más de 150 caracteres.',
-            'email.unique'      => 'Este correo electrónico ya está registrado.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min'      => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed' => 'La confirmación de contraseña no coincide.',
+            'username.required' => __('app.val_username_required'),
+            'username.min'      => __('app.val_username_min'),
+            'username.max'      => __('app.val_username_max'),
+            'username.unique'   => __('app.val_username_unique'),
+            'username.regex'    => __('app.val_username_regex'),
+            'email.required'    => __('app.val_email_required'),
+            'email.email'       => __('app.val_email_email'),
+            'email.max'         => __('app.val_email_max'),
+            'email.unique'      => __('app.val_email_unique'),
+            'password.required' => __('app.val_password_required'),
+            'password.min'      => __('app.val_password_min'),
+            'password.confirmed' => __('app.val_password_confirmed'),
         ];
     }
 }

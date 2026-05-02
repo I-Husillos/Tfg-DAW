@@ -65,15 +65,15 @@ class UpdateBudgetRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'category_id.required'  => 'La categoría es obligatoria.',
-            'category_id.exists'    => 'La categoría seleccionada no existe.',
-            'period_year.required'  => 'El año es obligatorio.',
-            'period_month.required' => 'El mes es obligatorio.',
-            'period_month.min'      => 'El mes debe estar entre 1 y 12.',
-            'period_month.max'      => 'El mes debe estar entre 1 y 12.',
-            'limit_amount.required' => 'El importe límite es obligatorio.',
-            'limit_amount.min'      => 'El importe límite debe ser mayor que cero.',
-            '_unique_budget'        => 'Ya existe un presupuesto para esta categoría en ese período.',
+            'category_id.required'  => __('app.val_budget_category_required'),
+            'category_id.exists'    => __('app.val_category_exists'),
+            'period_year.required'  => __('app.val_budget_year_required'),
+            'period_month.required' => __('app.val_budget_month_required'),
+            'period_month.min'      => __('app.val_budget_month_range'),
+            'period_month.max'      => __('app.val_budget_month_range'),
+            'limit_amount.required' => __('app.val_budget_limit_required'),
+            'limit_amount.min'      => __('app.val_budget_limit_min'),
+            '_unique_budget'        => __('app.val_budget_unique'),
         ];
     }
 }

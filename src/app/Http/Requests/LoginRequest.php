@@ -30,10 +30,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required'    => 'El correo o nombre de usuario es obligatorio.',
-            'email.max'         => 'El campo no puede tener más de 150 caracteres.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min'      => 'La contraseña debe tener al menos 8 caracteres.',
+            'email.required'    => __('app.val_email_required'),
+            'email.max'         => __('app.val_email_max'),
+            'password.required' => __('app.val_password_required'),
+            'password.min'      => __('app.val_password_min'),
         ];
     }
 }

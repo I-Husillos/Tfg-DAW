@@ -35,10 +35,10 @@ class UpdatePasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'current_password.required'      => 'La contraseña actual es obligatoria.',
-            'current_password.current_password' => 'La contraseña actual no es correcta.',
-            'password.required'              => 'La nueva contraseña es obligatoria.',
-            'password.confirmed'             => 'La confirmación de contraseña no coincide.',
+            'current_password.required'      => __('app.val_current_password_required'),
+            'current_password.current_password' => __('app.val_current_password_incorrect'),
+            'password.required'              => __('app.val_new_password_required'),
+            'password.confirmed'             => __('app.val_password_confirmed'),
         ];
     }
 }

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Informes')
+@section('title', __('app.reports'))
 
 @push('breadcrumb')
-<li class="breadcrumb-item active">Informes</li>
+<li class="breadcrumb-item active">{{ __('app.reports') }}</li>
 @endpush
 
 @section('content')
@@ -13,7 +13,7 @@
     <div class="card-body">
         <form method="GET" action="{{ route('reports.index') }}" class="form-inline">
             <div class="form-group mr-3">
-                <label class="mr-2">Año</label>
+                <label class="mr-2">{{ __('app.label_year') }}</label>
                 <select name="year" class="form-control">
                     @foreach($years as $y)
                     <option value="{{ $y }}" {{ $y == $year ? 'selected' : '' }}>
@@ -23,7 +23,7 @@
                 </select>
             </div>
             <div class="form-group mr-3">
-                <label class="mr-2">Mes</label>
+                <label class="mr-2">{{ __('app.label_month') }}</label>
                 <select name="month" class="form-control">
                     @foreach(range(1, 12) as $m)
                     <option value="{{ $m }}" {{ $m == $month ? 'selected' : '' }}>
@@ -33,11 +33,11 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary mr-2">
-                <i class="fas fa-search mr-1"></i> Ver informe
+                <i class="fas fa-search mr-1"></i> {{ __('app.view_report') }}
             </button>
             <a href="{{ route('reports.export.pdf', ['year' => $year, 'month' => $month]) }}"
                 class="btn btn-danger">
-                <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
+                <i class="fas fa-file-pdf mr-1"></i> {{ __('app.export_pdf') }}
             </a>
         </form>
     </div>
@@ -49,7 +49,7 @@
         <div class="small-box bg-success">
             <div class="inner">
                 <h3>{{ number_format($totalIncome, 2, ',', '.') }} €</h3>
-                <p>Total ingresos</p>
+                <p>{{ __('app.total_income') }}</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-up"></i></div>
         </div>
@@ -58,7 +58,7 @@
         <div class="small-box bg-danger">
             <div class="inner">
                 <h3>{{ number_format($totalExpense, 2, ',', '.') }} €</h3>
-                <p>Total gastos</p>
+                <p>{{ __('app.total_expense') }}</p>
             </div>
             <div class="icon"><i class="fas fa-arrow-down"></i></div>
         </div>
@@ -67,7 +67,7 @@
         <div class="small-box {{ $balance >= 0 ? 'bg-info' : 'bg-warning' }}">
             <div class="inner">
                 <h3>{{ number_format($balance, 2, ',', '.') }} €</h3>
-                <p>Balance</p>
+                <p>{{ __('app.balance') }}</p>
             </div>
             <div class="icon"><i class="fas fa-balance-scale"></i></div>
         </div>
@@ -82,7 +82,7 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-chart-line mr-1"></i>
-                    Evolución diaria —
+                    {{ __('app.daily_evolution') }} —
                     {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }}
                     {{ $year }}
                 </h3>
@@ -104,13 +104,13 @@
             <div class="card-header">
                 <h3 class="card-title">
                     <i class="fas fa-chart-pie mr-1"></i>
-                    Gastos por categoría
+                    {{ __('app.expense_by_category') }}
                 </h3>
             </div>
             <div class="card-body">
                 @if($expensesByCategory->isEmpty())
                 <p class="text-muted text-center py-3">
-                    No hay gastos en este período.
+                    {{ __('app.no_expenses_period') }}
                 </p>
                 @else
                 <canvas id="chartCategories"
@@ -132,19 +132,19 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-tags mr-1"></i> Desglose por categoría
+                    <i class="fas fa-tags mr-1"></i> {{ __('app.breakdown_by_category') }}
                 </h3>
             </div>
             <div class="card-body p-0">
                 @if($expensesByCategory->isEmpty())
-                <p class="text-muted text-center py-4">Sin datos.</p>
+                <p class="text-muted text-center py-4">{{ __('app.no_data') }}</p>
                 @else
                 <table class="table table-sm mb-0">
                     <thead>
                         <tr>
-                            <th>Categoría</th>
-                            <th class="text-right">Importe</th>
-                            <th class="text-right">% del total</th>
+                            <th>{{ __('app.col_category') }}</th>
+                            <th class="text-right">{{ __('app.col_amount') }}</th>
+                            <th class="text-right">{{ __('app.percent_total') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -173,19 +173,19 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-list-ol mr-1"></i> Top 5 gastos del mes
+                    <i class="fas fa-list-ol mr-1"></i> {{ __('app.top5_expenses') }}
                 </h3>
             </div>
             <div class="card-body p-0">
                 @if($topExpenses->isEmpty())
-                <p class="text-muted text-center py-4">Sin datos.</p>
+                <p class="text-muted text-center py-4">{{ __('app.no_data') }}</p>
                 @else
                 <table class="table table-sm mb-0">
                     <thead>
                         <tr>
-                            <th>Concepto</th>
-                            <th>Fecha</th>
-                            <th class="text-right">Importe</th>
+                            <th>{{ __('app.col_concept') }}</th>
+                            <th>{{ __('app.col_date') }}</th>
+                            <th class="text-right">{{ __('app.col_amount') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,7 +212,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-wallet mr-1"></i> Estado de presupuestos
+            <i class="fas fa-wallet mr-1"></i> {{ __('app.report_budget_status') }}
         </h3>
     </div>
     <div class="card-body">

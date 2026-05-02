@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Transacciones')
+@section('title', __('app.transactions'))
 
 @push('breadcrumb')
-<li class="breadcrumb-item active">Transacciones</li>
+<li class="breadcrumb-item active">{{ __('app.transactions') }}</li>
 @endpush
 
 @section('content')
@@ -11,11 +11,11 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-exchange-alt mr-1"></i> Transacciones
+            <i class="fas fa-exchange-alt mr-1"></i> {{ __('app.transactions') }}
         </h3>
         <div class="card-tools">
             <a href="{{ route('transactions.create') }}" class="btn btn-sm btn-primary">
-                <i class="fas fa-plus mr-1"></i> Nueva transacción
+                <i class="fas fa-plus mr-1"></i> {{ __('app.new_transaction') }}
             </a>
         </div>
     </div>
@@ -40,14 +40,14 @@
         <div class="row mb-3">
             <div class="col-md-2 col-sm-6 mb-2">
                 <select id="filter-type" class="form-control">
-                    <option value="">Tipo: Todos</option>
-                    <option value="income">Ingresos</option>
-                    <option value="expense">Gastos</option>
+                    <option value="">{{ __('app.filter_type_all') }}</option>
+                    <option value="income">{{ __('app.filter_income') }}</option>
+                    <option value="expense">{{ __('app.filter_expense') }}</option>
                 </select>
             </div>
             <div class="col-md-3 col-sm-6 mb-2">
                 <select id="filter-category" class="form-control">
-                    <option value="">Categoría: Todas</option>
+                    <option value="">{{ __('app.filter_category_all') }}</option>
                     @foreach($categories as $category)
                     <option value="{{ $category->id }}">
                         {{ $category->display_name ?? $category->name }}
@@ -65,7 +65,7 @@
             </div>
             <div class="col-md-2 col-sm-6 mb-2">
                 <select id="filter-currency" class="form-control">
-                    <option value="">Moneda: Todas</option>
+                    <option value="">{{ __('app.filter_currency_all') }}</option>
                     <option value="EUR">EUR — Euro</option>
                     <option value="USD">USD — Dólar</option>
                     <option value="GBP">GBP — Libra</option>
@@ -79,7 +79,7 @@
             <div class="col-md-1 col-sm-6 mb-2">
                 <button id="clear-filters" class="btn btn-secondary btn-block">
                     <i class="fas fa-times"></i>
-                    <span class="d-none d-lg-inline ml-1">Limpiar</span>
+                    <span class="d-none d-lg-inline ml-1">{{ __('app.filter_clear') }}</span>
                 </button>
             </div>
         </div>
@@ -90,12 +90,12 @@
                 data-api-url="{{ route('api.transactions.index') }}">
                 <thead class="text-center bg-white font-weight-bold">
                     <tr>
-                        <th>Fecha</th>
-                        <th>Concepto</th>
-                        <th>Categoría</th>
-                        <th>Tipo</th>
-                        <th>Importe</th>
-                        <th>Acciones</th>
+                        <th>{{ __('app.col_date') }}</th>
+                        <th>{{ __('app.col_concept') }}</th>
+                        <th>{{ __('app.col_category') }}</th>
+                        <th>{{ __('app.col_type') }}</th>
+                        <th>{{ __('app.col_amount') }}</th>
+                        <th>{{ __('app.col_actions') }}</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

@@ -55,7 +55,7 @@ class TransactionController extends Controller
 
         return redirect()
             ->route('transactions.index')
-            ->with('success', 'Transacción registrada correctamente.');
+            ->with('success', __('app.transaction_stored'));
     }
 
     // Muestra el detalle de una transacción.
@@ -92,7 +92,7 @@ class TransactionController extends Controller
 
         return redirect()
             ->route('transactions.index')
-            ->with('success', 'Transacción actualizada correctamente.');
+            ->with('success', __('app.transaction_updated'));
     }
 
     // Elimina una transacción con confirmación previa
@@ -105,6 +105,6 @@ class TransactionController extends Controller
 
         return redirect()
             ->route('transactions.index')
-            ->with('success', 'Transacción eliminada correctamente.');
+            ->with('success', __('app.transaction_deleted'));
     }
 }

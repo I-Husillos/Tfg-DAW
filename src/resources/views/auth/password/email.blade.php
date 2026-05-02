@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Recuperar contraseña')
+@section('title', __('app.forgot_title'))
 @section('body-class', 'login-page hold-transition')
 
 @section('content')
@@ -15,7 +15,7 @@
         <div class="card-body">
 
             <p class="text-muted text-center mb-4">
-                Introduce tu correo y te enviaremos un enlace para restablecer tu contraseña.
+                {{ __('app.forgot_instruction') }}
             </p>
 
             @if (session('status'))
@@ -32,7 +32,7 @@
                         type="email"
                         name="email"
                         class="form-control @error('email') is-invalid @enderror"
-                        placeholder="Correo electrónico"
+                        placeholder="{{ __('app.email_placeholder') }}"
                         value="{{ old('email') }}"
                         autofocus>
                     <div class="input-group-append">
@@ -46,13 +46,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">
-                    Enviar enlace de recuperación
+                {{ __('app.forgot_submit') }}
                 </button>
             </form>
 
             <p class="text-center mt-3 mb-0">
                 <a href="{{ route('login') }}">
-                    <i class="fas fa-arrow-left mr-1"></i> Volver al inicio de sesión
+                    <i class="fas fa-arrow-left mr-1"></i> {{ __('app.back_to_login') }}
                 </a>
             </p>
 

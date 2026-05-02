@@ -39,7 +39,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('categories.index')
-            ->with('success', 'Categoría creada correctamente.');
+            ->with('success', __('app.category_stored'));
     }
 
     public function edit(Category $category)
@@ -64,7 +64,7 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('categories.index')
-            ->with('success', 'Categoría actualizada correctamente.');
+            ->with('success', __('app.category_updated'));
     }
 
     public function destroy(Category $category)
@@ -77,7 +77,7 @@ class CategoryController extends Controller
         if ($category->transactions()->exists()) {
             return redirect()
                 ->route('categories.index')
-                ->with('error', 'No se puede eliminar esta categoría porque tiene transacciones asociadas. Reasígnalas primero.');
+                ->with('error', __('app.category_has_transactions'));
         }
 
         // Si tiene subcategorías, las desvinculamos poniendo
@@ -88,6 +88,6 @@ class CategoryController extends Controller
 
         return redirect()
             ->route('categories.index')
-            ->with('success', 'Categoría eliminada correctamente.');
+            ->with('success', __('app.category_deleted'));
     }
 }

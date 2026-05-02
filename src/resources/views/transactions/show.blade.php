@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Detalle de transacción')
+@section('title', __('app.transaction_detail'))
 
 @push('breadcrumb')
 <li class="breadcrumb-item">
-    <a href="{{ route('transactions.index') }}">Transacciones</a>
+    <a href="{{ route('transactions.index') }}">{{ __('app.transactions') }}</a>
 </li>
-<li class="breadcrumb-item active">Detalle</li>
+<li class="breadcrumb-item active">{{ __('app.transaction_detail') }}</li>
 @endpush
 
 @section('content')
@@ -15,20 +15,20 @@
     <div class="card-header">
         <h3 class="card-title">
             <span class="badge badge-{{ $transaction->type === 'income' ? 'success' : 'danger' }} mr-2">
-                {{ $transaction->type === 'income' ? 'Ingreso' : 'Gasto' }}
+                {{ $transaction->type === 'income' ? __('app.income') : __('app.expense') }}
             </span>
             {{ $transaction->name ?? $transaction->merchant ?? 'Transacción #' . $transaction->id }}
         </h3>
         <div class="card-tools">
             <a href="{{ route('transactions.edit', $transaction) }}"
                 class="btn btn-sm btn-warning">
-                <i class="fas fa-edit mr-1"></i> Editar
+                <i class="fas fa-edit mr-1"></i> {{ __('app.edit') }}
             </a>
         </div>
     </div>
     <div class="card-body">
         <dl class="row">
-            <dt class="col-sm-3">Importe</dt>
+            <dt class="col-sm-3">{{ __('app.col_amount') }}</dt>
             <dd class="col-sm-9">
                 {{--
                     Mostramos la moneda con esta jerarquía:
@@ -49,32 +49,32 @@
                 </strong>
             </dd>
 
-            <dt class="col-sm-3">Fecha</dt>
+            <dt class="col-sm-3">{{ __('app.col_date') }}</dt>
             <dd class="col-sm-9">{{ $transaction->date->format('d/m/Y') }}</dd>
 
-            <dt class="col-sm-3">Categoría</dt>
+            <dt class="col-sm-3">{{ __('app.col_category') }}</dt>
             <dd class="col-sm-9">
                 {{ $transaction->category?->display_name
                        ?? $transaction->category?->name
-                       ?? 'Sin categoría' }}
+                       ?? __('app.no_category') }}
             </dd>
 
             @if($transaction->name)
-            <dt class="col-sm-3">Concepto</dt>
+            <dt class="col-sm-3">{{ __('app.col_concept') }}</dt>
             <dd class="col-sm-9">{{ $transaction->name }}</dd>
             @endif
 
             @if($transaction->merchant)
-            <dt class="col-sm-3">Comercio / Pagador</dt>
+            <dt class="col-sm-3">{{ __('app.label_merchant') }}</dt>
             <dd class="col-sm-9">{{ $transaction->merchant }}</dd>
             @endif
 
             @if($transaction->description)
-            <dt class="col-sm-3">Descripción</dt>
+            <dt class="col-sm-3">{{ __('app.label_description') }}</dt>
             <dd class="col-sm-9">{{ $transaction->description }}</dd>
             @endif
 
-            <dt class="col-sm-3">Moneda original</dt>
+            <dt class="col-sm-3">{{ __('app.show_original_currency') }}</dt>
             <dd class="col-sm-9">
                 {{--
                     Si la moneda guardada en BD difiere de la moneda
@@ -83,17 +83,17 @@
                 --}}
                 <span class="badge badge-secondary">{{ $transaction->currency }}</span>
                 @if($transaction->currency !== user_currency())
-                    <small class="text-muted ml-1">
-                        (tu moneda actual es {{ user_currency() }})
-                    </small>
+                <small class="text-muted ml-1">
+                    {{ __('app.show_your_currency', ['currency' => user_currency()]) }}
+                </small>
                 @endif
             </dd>
 
-            <dt class="col-sm-3">Registrada el</dt>
+            <dt class="col-sm-3">{{ __('app.show_registered_at') }}</dt>
             <dd class="col-sm-9">{{ $transaction->created_at->format('d/m/Y H:i') }}</dd>
 
             @if($transaction->updated_at->ne($transaction->created_at))
-            <dt class="col-sm-3">Última modificación</dt>
+            <dt class="col-sm-3">{{ __('app.show_last_modified') }}</dt>
             <dd class="col-sm-9">{{ $transaction->updated_at->format('d/m/Y H:i') }}</dd>
             @endif
         </dl>

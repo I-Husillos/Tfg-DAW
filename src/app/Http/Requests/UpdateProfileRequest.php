@@ -35,10 +35,10 @@ class UpdateProfileRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'currency.required' => 'La moneda es obligatoria.',
-            'currency.size'     => 'La moneda debe ser un código de 3 letras (EUR, USD…).',
-            'language.required' => 'El idioma es obligatorio.',
-            'timezone.required' => 'La zona horaria es obligatoria.',
+            'currency.required' => __('app.val_profile_currency_required'),
+            'currency.size'     => __('app.val_profile_currency_size'),
+            'language.required' => __('app.val_profile_language_required'),
+            'timezone.required' => __('app.val_profile_timezone_required'),
         ];
     }
 }

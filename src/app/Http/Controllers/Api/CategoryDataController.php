@@ -38,7 +38,7 @@ class CategoryDataController extends Controller
     {
         return [
             'name'          => $c->display_name ?? $c->name,
-            'type'          => $c->type === 'income' ? 'Ingreso' : 'Gasto',
+            'type'          => $c->type === 'income' ? __('app.income') : __('app.expense'),
             'type_raw'      => $c->type,
             'subcategories' => $c->children->pluck('name')->join(', ') ?: '—',
             'description'   => $c->description ?? '—',
@@ -51,16 +51,19 @@ class CategoryDataController extends Controller
         $editUrl    = route('categories.edit', $c);
         $destroyUrl = route('categories.destroy', $c);
         $csrf       = csrf_token();
+        $editLabel = __('app.edit');
+        $deleteLabel = __('app.action_delete');
+        $confirmDelete = __('app.confirm_delete_category');
 
         return <<<HTML
-            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="Editar">
+            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="{$editLabel}">
                 <i class="fas fa-edit"></i>
             </a>
             <form action="{$destroyUrl}" method="POST" class="d-inline"
-                  onsubmit="return confirm('¿Eliminar esta categoría?')">
+                  onsubmit="return confirm('{$confirmDelete}')">
                 <input type="hidden" name="_token" value="{$csrf}">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                <button type="submit" class="btn btn-xs btn-danger" title="{$deleteLabel}">
                     <i class="fas fa-trash"></i>
                 </button>
             </form>

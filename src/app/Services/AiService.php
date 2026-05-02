@@ -50,7 +50,7 @@ class AiService
 
         $expensesByCategory = $transactions
             ->where('type', 'expense')
-            ->groupBy(fn($t) => $t->category?->name ?? 'Sin categoría')
+            ->groupBy(fn($t) => $t->category?->name ?? __('app.ai_no_category'))
             ->map(fn($group) => $group->sum('amount'))
             ->sortDesc()
             ->take(5)
@@ -94,7 +94,7 @@ class AiService
                 'date'     => $t->date->format('d/m/Y'),
                 'amount'   => $t->amount,
                 'type'     => $t->type,
-                'category' => $t->category?->name ?? 'Sin categoría',
+                'category' => $t->category?->name ?? __('app.ai_no_category'),
                 'name'     => $t->name ?? $t->merchant ?? '',
             ])->toArray(),
         ];
@@ -102,30 +102,27 @@ class AiService
 
     private function buildPrompt(array $context, string $question, array $history = []): string
     {
-        $text  = "Eres un asistente financiero personal.\n";
-        $text .= "Responde solo con los datos proporcionados.\n";
-        $text .= "Si no hay información suficiente, dilo claramente.\n";
-        $text .= "Responde en español de forma clara y breve.\n\n";
+        $text  = __('app.ai_prompt_intro') . "\n";
 
-        $text .= "DATOS DEL USUARIO\n";
-        $text .= "- Ingresos este mes: {$context['total_income']} €\n";
-        $text .= "- Gastos este mes: {$context['total_expense']} €\n";
-        $text .= "- Balance: {$context['balance']} €\n\n";
+        $text .= __('app.ai_prompt_user_data') . "\n";
+        $text .= "- " . __('app.ai_prompt_income') . ": {$context['total_income']} €\n";
+        $text .= "- " . __('app.ai_prompt_expense') . ": {$context['total_expense']} €\n";
+        $text .= "- " . __('app.ai_prompt_balance') . ": {$context['balance']} €\n\n";
 
-        $text .= "TOP GASTOS POR CATEGORÍA\n";
+        $text .= __('app.ai_prompt_top_expenses') . "\n";
         foreach ($context['expenses_top'] as $cat => $amount) {
             $text .= "- {$cat}: {$amount} €\n";
         }
 
         if (!empty($context['budgets'])) {
-            $text .= "\nPRESUPUESTOS\n";
+            $text .= "\n" . __('app.ai_prompt_budgets') . "\n";
             foreach ($context['budgets'] as $budget) {
                 $text .= "- {$budget['category']}: {$budget['spent']} € de {$budget['limit']} € ({$budget['percentage']}%)\n";
             }
         }
 
         if (!empty($context['recent_transactions'])) {
-            $text .= "\nÚLTIMAS TRANSACCIONES\n";
+            $text .= "\n" . __('app.ai_prompt_recent') . "\n";
             foreach ($context['recent_transactions'] as $t) {
                 $sign  = $t['type'] === 'income' ? '+' : '-';
                 $text .= "- {$t['date']}: {$t['name']} {$sign}{$t['amount']} € ({$t['category']})\n";
@@ -133,14 +130,16 @@ class AiService
         }
 
         if (!empty($history)) {
-            $text .= "\nHISTORIAL DE CONVERSACIÓN\n";
+            $text .= "\n" . __('app.ai_prompt_history') . "\n";
             foreach ($history as $item) {
-                $prefix = $item['role'] === 'user' ? 'Usuario' : 'Asistente';
+                $prefix = $item['role'] === 'user'
+                    ? __('app.ai_prompt_user_prefix')
+                    : __('app.ai_prompt_assistant_prefix');
                 $text  .= "{$prefix}: {$item['content']}\n";
             }
         }
 
-        $text .= "\nPREGUNTA ACTUAL\n{$question}\n";
+        $text .= "\n" . __('app.ai_prompt_question') . "\n{$question}\n";
 
         return $text;
     }

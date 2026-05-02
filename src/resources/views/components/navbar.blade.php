@@ -42,8 +42,7 @@
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg">
                     <span class="dropdown-item dropdown-header">
                         {{ $budgetAlertCount }}
-                        {{ $budgetAlertCount === 1 ? 'presupuesto' : 'presupuestos' }}
-                        con alerta
+                        {{ $budgetAlertCount === 1 ? __('app.budget_alert_singular') : __('app.budget_alert_plural') }}
                     </span>
                     <div class="dropdown-divider"></div>
                     @foreach($budgetAlerts as $alert)
@@ -61,7 +60,7 @@
                         <div class="dropdown-divider"></div>
                     @endforeach
                     <a href="{{ route('budgets.index') }}" class="dropdown-item dropdown-footer">
-                        Ver todos los presupuestos
+                        {{ __('app.view_all_budgets') }}
                     </a>
                 </div>
             </li>
@@ -73,7 +72,7 @@
                 @csrf
                 <button type="submit" class="nav-link btn btn-link">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span class="d-none d-sm-inline ml-1">Salir</span>
+                    <span class="d-none d-sm-inline ml-1">{{ __('app.logout') }}</span>
                 </button>
             </form>
         </li>

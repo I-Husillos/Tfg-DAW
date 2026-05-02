@@ -60,16 +60,19 @@ class BudgetDataController extends Controller
         $editUrl    = route('budgets.edit', $b);
         $destroyUrl = route('budgets.destroy', $b);
         $csrf       = csrf_token();
+        $editLabel = __('app.edit');
+        $deleteLabel = __('app.action_delete');
+        $confirmDelete = __('app.confirm_delete_budget');
 
         return <<<HTML
-            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="Editar">
+            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="{$editLabel}">
                 <i class="fas fa-edit"></i>
             </a>
             <form action="{$destroyUrl}" method="POST" class="d-inline"
-                  onsubmit="return confirm('¿Eliminar este presupuesto?')">
+                  onsubmit="return confirm('{$confirmDelete}')">
                 <input type="hidden" name="_token" value="{$csrf}">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                <button type="submit" class="btn btn-xs btn-danger" title="{$deleteLabel}">
                     <i class="fas fa-trash"></i>
                 </button>
             </form>

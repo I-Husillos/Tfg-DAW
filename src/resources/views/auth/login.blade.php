@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Iniciar sesión')
+@section('title', __('app.login_title'))
 @section('body-class', 'landing-page hold-transition')
 
 @section('content')
@@ -17,25 +17,23 @@
                     <b>Smart</b>Budget
                 </h1>
                 <p class="lead mb-4">
-                    Tu gestor financiero personal. Controla ingresos, gastos
-                    y presupuestos desde un único panel, con informes claros
-                    y privacidad total sobre tus datos.
+                    {{ __('app.login_tagline') }}
                 </p>
                 <div class="row">
                     <div class="col-md-4 mb-3 text-center">
                         <i class="fas fa-chart-line fa-3x text-primary mb-2"></i>
-                        <h6 class="font-weight-bold">Análisis financiero</h6>
-                        <small class="text-muted">Dashboard con gráficos e informes exportables.</small>
+                        <h6 class="font-weight-bold">{{ __('app.login_feature_analysis') }}</h6>
+                        <small class="text-muted">{{ __('app.login_feature_analysis_desc') }}</small>
                     </div>
                     <div class="col-md-4 mb-3 text-center">
                         <i class="fas fa-tags fa-3x text-success mb-2"></i>
-                        <h6 class="font-weight-bold">Categorías y presupuestos</h6>
-                        <small class="text-muted">Organiza y controla tus gastos por categoría.</small>
+                        <h6 class="font-weight-bold">{{ __('app.login_feature_categories') }}</h6>
+                        <small class="text-muted">{{ __('app.login_feature_categories_desc') }}</small>
                     </div>
                     <div class="col-md-4 mb-3 text-center">
                         <i class="fas fa-lock fa-3x text-warning mb-2"></i>
-                        <h6 class="font-weight-bold">Privacidad total</h6>
-                        <small class="text-muted">Tus datos se procesan en local, sin servicios externos.</small>
+                        <h6 class="font-weight-bold">{{ __('app.login_feature_privacy') }}</h6>
+                        <small class="text-muted">{{ __('app.login_feature_privacy_desc') }}</small>
                     </div>
                 </div>
             </div>
@@ -44,7 +42,7 @@
             <div class="col-lg-5">
                 <div class="card card-outline card-primary shadow">
                     <div class="card-header text-center">
-                        <h4 class="mb-0">Iniciar sesión</h4>
+                        <h4 class="mb-0">{{ __('app.login_title') }}</h4>
                     </div>
                     <div class="card-body">
 
@@ -61,7 +59,7 @@
                                     type="text"
                                     name="email"
                                     class="form-control @error('email') is-invalid @enderror"
-                                    placeholder="Correo o nombre de usuario"
+                                    placeholder="{{ __('app.email_or_username') }}"
                                     value="{{ old('email') }}"
                                     autofocus>
                                 <div class="input-group-append">
@@ -79,7 +77,7 @@
                                     type="password"
                                     name="password"
                                     class="form-control @error('password') is-invalid @enderror"
-                                    placeholder="Contraseña">
+                                    placeholder="{{ __('app.password') }}">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <span class="fas fa-lock"></span>
@@ -94,23 +92,23 @@
                                 <div class="col-8">
                                     <div class="icheck-primary">
                                         <input type="checkbox" id="remember" name="remember">
-                                        <label for="remember">Recuérdame</label>
+                                        <label for="remember">{{ __('app.remember_me') }}</label>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <button type="submit" class="btn btn-primary btn-block">
-                                        Entrar
+                                        {{ __('app.login_submit') }}
                                     </button>
                                 </div>
                             </div>
                         </form>
 
                         <p class="text-center mt-2 mb-1">
-                            <a href="{{ route('password.request') }}">Olvidé mi contraseña</a>
+                            <a href="{{ route('password.request') }}">{{ __('app.forgot_password') }}</a>
                         </p>
                         <p class="text-center mb-0">
-                            ¿No tienes cuenta?
-                            <a href="{{ route('register') }}">Regístrate</a>
+                            {{ __('app.no_account') }}
+                            <a href="{{ route('register') }}">{{ __('app.register_link') }}</a>
                         </p>
 
                     </div>

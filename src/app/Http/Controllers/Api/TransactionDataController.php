@@ -53,7 +53,7 @@ class TransactionDataController extends Controller
             'category'    => $t->category
                 ? ($t->category->display_name ?? $t->category->name)
                 : '—',
-            'type'        => $t->type === 'income' ? 'Ingreso' : 'Gasto',
+            'type'        => $t->type === 'income' ? __('app.income') : __('app.expense'),
             'type_raw'    => $t->type,
             'amount'      => number_format($t->amount, 2, ',', '.'),
             'currency'    => $t->currency,
@@ -70,19 +70,23 @@ class TransactionDataController extends Controller
         $editUrl    = route('transactions.edit', $t);
         $destroyUrl = route('transactions.destroy', $t);
         $csrf       = csrf_token();
+        $viewLabel  = __('app.action_view');
+        $editLabel  = __('app.edit');
+        $deleteLabel = __('app.action_delete');
+        $confirmDelete = __('app.confirm_delete_transaction');
 
         return <<<HTML
-            <a href="{$showUrl}" class="btn btn-xs btn-info" title="Ver">
+            <a href="{$showUrl}" class="btn btn-xs btn-info" title="{$viewLabel}">
                 <i class="fas fa-eye"></i>
             </a>
-            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="Editar">
+            <a href="{$editUrl}" class="btn btn-xs btn-warning" title="{$editLabel}">
                 <i class="fas fa-edit"></i>
             </a>
             <form action="{$destroyUrl}" method="POST" class="d-inline"
-                  onsubmit="return confirm('¿Eliminar esta transacción?')">
+                  onsubmit="return confirm('{$confirmDelete}')">
                 <input type="hidden" name="_token" value="{$csrf}">
                 <input type="hidden" name="_method" value="DELETE">
-                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                <button type="submit" class="btn btn-xs btn-danger" title="{$deleteLabel}">
                     <i class="fas fa-trash"></i>
                 </button>
             </form>

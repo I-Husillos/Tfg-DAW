@@ -4,9 +4,6 @@ namespace App\Providers;
 
 use App\Services\BudgetAlertService;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,12 +17,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Establecer el idioma según el perfil del usuario autenticado
-        $locale = Auth::check()
-            ? (Auth::user()->profile?->language ?? config('app.locale'))
-            : Session::get('locale', config('app.locale'));
-        App::setLocale($locale);
-
         // Compartimos las alertas de presupuesto con
         // todas las vistas que usen el layout 'app'.
         // View::composer ejecuta el callback justo antes

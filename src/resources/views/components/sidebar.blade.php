@@ -40,7 +40,7 @@
                     <a href="{{ route('dashboard') }}"
                        class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Dashboard</p>
+                        <p>{{ __('app.sidebar_dashboard') }}</p>
                     </a>
                 </li>
 
@@ -49,7 +49,7 @@
                     <a href="{{ route('transactions.index') }}"
                        class="nav-link {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-exchange-alt"></i>
-                        <p>Transacciones</p>
+                        <p>{{ __('app.sidebar_transactions') }}</p>
                     </a>
                 </li>
 
@@ -58,7 +58,7 @@
                     <a href="{{ route('categories.index') }}"
                        class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tags"></i>
-                        <p>Categorías</p>
+                        <p>{{ __('app.sidebar_categories') }}</p>
                     </a>
                 </li>
 
@@ -67,7 +67,7 @@
                     <a href="{{ route('budgets.index') }}"
                        class="nav-link {{ request()->routeIs('budgets.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-wallet"></i>
-                        <p>Presupuestos</p>
+                        <p>{{ __('app.sidebar_budgets') }}</p>
                     </a>
                 </li>
 
@@ -76,19 +76,19 @@
                     <a href="{{ route('reports.index') }}"
                        class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-chart-bar"></i>
-                        <p>Informes</p>
+                        <p>{{ __('app.sidebar_reports') }}</p>
                     </a>
                 </li>
 
                 {{-- Separador --}}
-                <li class="nav-header">CUENTA</li>
+                <li class="nav-header">{{ __('app.sidebar_account') }}</li>
 
                 {{-- Perfil --}}
                 <li class="nav-item">
                     <a href="{{ route('profile.edit') }}"
                        class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-user-cog"></i>
-                        <p>Mi perfil</p>
+                        <p>{{ __('app.sidebar_profile') }}</p>
                     </a>
                 </li>
 

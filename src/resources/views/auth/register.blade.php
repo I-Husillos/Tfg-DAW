@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Crear cuenta')
+@section('title', __('app.register_title'))
 @section('body-class', 'register-page hold-transition')
 
 @section('content')
@@ -15,25 +15,24 @@
                     <b>Smart</b>Budget
                 </h1>
                 <p class="lead">
-                    Crea tu cuenta y empieza a tener el control total
-                    de tus finanzas personales hoy mismo.
+                    {{ __('app.register_tagline') }}
                 </p>
                 <ul class="list-unstyled mt-4">
                     <li class="mb-2">
                         <i class="fas fa-check text-success mr-2"></i>
-                        Registro de ingresos y gastos
+                        {{ __('app.register_feature_1') }}
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-check text-success mr-2"></i>
-                        Dashboard con gráficos en tiempo real
+                        {{ __('app.register_feature_2') }}
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-check text-success mr-2"></i>
-                        Presupuestos mensuales con alertas
+                        {{ __('app.register_feature_3') }}
                     </li>
                     <li class="mb-2">
                         <i class="fas fa-check text-success mr-2"></i>
-                        Informes mensuales exportables en PDF
+                        {{ __('app.register_feature_4') }}
                     </li>
                 </ul>
             </div>
@@ -41,7 +40,7 @@
             <div class="col-lg-5">
                 <div class="card card-outline card-primary shadow">
                     <div class="card-header text-center">
-                        <h4 class="mb-0">Crea tu cuenta</h4>
+                        <h4 class="mb-0">{{ __('app.register_card_title') }}</h4>
                     </div>
                     <div class="card-body">
 
@@ -53,7 +52,7 @@
                                     type="text"
                                     name="username"
                                     class="form-control @error('username') is-invalid @enderror"
-                                    placeholder="Nombre de usuario"
+                                    placeholder="{{ __('app.username_placeholder') }}"
                                     value="{{ old('username') }}"
                                     autofocus>
                                 <div class="input-group-append">
@@ -71,7 +70,7 @@
                                     type="email"
                                     name="email"
                                     class="form-control @error('email') is-invalid @enderror"
-                                    placeholder="Correo electrónico"
+                                    placeholder="{{ __('app.email_placeholder') }}"
                                     value="{{ old('email') }}">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
@@ -88,7 +87,7 @@
                                     type="password"
                                     name="password"
                                     class="form-control @error('password') is-invalid @enderror"
-                                    placeholder="Contraseña">
+                                    placeholder="{{ __('app.password_placeholder') }}">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <span class="fas fa-lock"></span>
@@ -104,7 +103,7 @@
                                     type="password"
                                     name="password_confirmation"
                                     class="form-control"
-                                    placeholder="Confirmar contraseña">
+                                    placeholder="{{ __('app.confirm_password_placeholder') }}">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <span class="fas fa-lock"></span>
@@ -113,13 +112,13 @@
                             </div>
 
                             <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fas fa-user-plus mr-1"></i> Crear cuenta
+                                <i class="fas fa-user-plus mr-1"></i> {{ __('app.register_submit') }}
                             </button>
                         </form>
 
                         <p class="text-center mt-3 mb-0">
-                            ¿Ya tienes cuenta?
-                            <a href="{{ route('login') }}">Inicia sesión</a>
+                            {{ __('app.already_account') }}
+                            <a href="{{ route('login') }}">{{ __('app.login_link') }}</a>
                         </p>
 
                     </div>

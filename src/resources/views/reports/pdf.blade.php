@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8">
-    <title>Informe financiero — {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }} {{ $year }}</title>
+    <title>{{ __('app.pdf_title') }} — {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }} {{ $year }}</title>
     <style>
         /* Estilos básicos solo para el PDF.
            No usamos AdminLTE aquí porque el PDF
@@ -90,33 +90,33 @@
 
 <body>
 
-    <h1>Informe financiero mensual</h1>
+    <h1>{{ __('app.pdf_title') }}</h1>
     <p>
         {{ \Carbon\Carbon::create()->month($month)->translatedFormat('F') }} {{ $year }}
-        &nbsp;·&nbsp; Generado el {{ now()->format('d/m/Y H:i') }}
+        &nbsp;·&nbsp; {{ __('app.generated_on') }} {{ now()->format('d/m/Y H:i') }}
     </p>
 
     {{-- Resumen --}}
-    <h2>Resumen del período</h2>
+    <h2>{{ __('app.pdf_period_summary') }}</h2>
     <table>
         <tr>
-            <th>Concepto</th>
-            <th class="text-right">Importe</th>
+            <th>{{ __('app.col_concept') }}</th>
+            <th class="text-right">{{ __('app.col_amount') }}</th>
         </tr>
         <tr>
-            <td>Total ingresos</td>
+            <td>{{ __('app.pdf_total_income') }}</td>
             <td class="text-right income">
                 + {{ number_format($totalIncome, 2, ',', '.') }} {{ user_currency() }}
             </td>
         </tr>
         <tr>
-            <td>Total gastos</td>
+            <td>{{ __('app.pdf_total_expense') }}</td>
             <td class="text-right expense">
                 - {{ number_format($totalExpense, 2, ',', '.') }} {{ user_currency() }}
             </td>
         </tr>
         <tr>
-            <td><strong>Balance</strong></td>
+            <td><strong>{{ __('app.pdf_balance') }}</strong></td>
             <td class="text-right {{ $balance >= 0 ? 'income' : 'expense' }}">
                 <strong>{{ number_format($balance, 2, ',', '.') }} {{ user_currency() }}</strong>
             </td>
@@ -125,12 +125,12 @@
 
     {{-- Gastos por categoría --}}
     @if($expensesByCategory->isNotEmpty())
-    <h2>Gastos por categoría</h2>
+    <h2>{{ __('app.pdf_expense_by_category') }}</h2>
     <table>
         <tr>
-            <th>Categoría</th>
-            <th class="text-right">Importe</th>
-            <th class="text-right">% del total</th>
+            <th>{{ __('app.col_category') }}</th>
+            <th class="text-right">{{ __('app.col_amount') }}</th>
+            <th class="text-right">{{ __('app.percent_total') }}</th>
         </tr>
         @foreach($expensesByCategory as $category => $amount)
         <tr>
@@ -150,13 +150,13 @@
 
     {{-- Top gastos --}}
     @if($topExpenses->isNotEmpty())
-    <h2>Top 5 gastos del mes</h2>
+    <h2>{{ __('app.pdf_top5') }}</h2>
     <table>
         <tr>
-            <th>Concepto</th>
-            <th>Categoría</th>
-            <th>Fecha</th>
-            <th class="text-right">Importe</th>
+            <th>{{ __('app.col_concept') }}</th>
+            <th>{{ __('app.col_category') }}</th>
+            <th>{{ __('app.col_date') }}</th>
+            <th class="text-right">{{ __('app.col_amount') }}</th>
         </tr>
         @foreach($topExpenses as $t)
         <tr>
@@ -173,12 +173,12 @@
 
     {{-- Presupuestos --}}
     @if($budgets->isNotEmpty())
-    <h2>Estado de presupuestos</h2>
+    <h2>{{ __('app.pdf_budgets') }}</h2>
     <table>
         <tr>
-            <th>Categoría</th>
-            <th class="text-right">Gastado</th>
-            <th class="text-right">Límite</th>
+            <th>{{ __('app.col_category') }}</th>
+            <th class="text-right">{{ __('app.col_spent') }}</th>
+            <th class="text-right">{{ __('app.col_limit') }}</th>
             <th class="text-right">%</th>
         </tr>
         @foreach($budgets as $budget)
@@ -202,21 +202,21 @@
 
     {{-- Todas las transacciones --}}
     @if($transactions->isNotEmpty())
-    <h2>Detalle de transacciones</h2>
+    <h2>{{ __('app.transactions_detail') }}</h2>
     <table>
         <tr>
-            <th>Fecha</th>
-            <th>Concepto</th>
-            <th>Categoría</th>
-            <th>Tipo</th>
-            <th class="text-right">Importe</th>
+            <th>{{ __('app.col_date') }}</th>
+            <th>{{ __('app.col_concept') }}</th>
+            <th>{{ __('app.col_category') }}</th>
+            <th>{{ __('app.col_type') }}</th>
+            <th class="text-right">{{ __('app.col_amount') }}</th>
         </tr>
         @foreach($transactions as $t)
         <tr>
             <td>{{ $t->date->format('d/m/Y') }}</td>
             <td>{{ $t->name ?? $t->merchant ?? '—' }}</td>
             <td>{{ $t->category?->name ?? '—' }}</td>
-            <td>{{ $t->type === 'income' ? 'Ingreso' : 'Gasto' }}</td>
+            <td>{{ $t->type === 'income' ? __('app.income') : __('app.expense') }}</td>
             <td class="text-right {{ $t->type === 'income' ? 'income' : 'expense' }}">
                 {{ $t->type === 'income' ? '+' : '-' }}
                 {{ number_format($t->amount, 2, ',', '.') }} {{ user_currency() }}
@@ -227,7 +227,7 @@
     @endif
 
     <div class="footer">
-        SmartBudget · Informe generado automáticamente · {{ now()->format('d/m/Y H:i') }}
+        SmartBudget · {{ __('app.report_generated_auto') }} · {{ now()->format('d/m/Y H:i') }}
     </div>
 
 </body>

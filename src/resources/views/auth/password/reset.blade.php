@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Nueva contraseña')
+@section('title', __('app.reset_title'))
 @section('body-class', 'login-page hold-transition')
 
 @section('content')
@@ -15,7 +15,7 @@
         <div class="card-body">
 
             <p class="text-muted text-center mb-4">
-                Introduce tu nueva contraseña.
+                {{ __('app.reset_instruction') }}
             </p>
 
             <form method="POST" action="{{ route('password.update') }}">
@@ -31,7 +31,7 @@
                         type="email"
                         name="email"
                         class="form-control @error('email') is-invalid @enderror"
-                        placeholder="Correo electrónico"
+                        placeholder="{{ __('app.email_placeholder') }}"
                         value="{{ old('email', $email ?? '') }}"
                         autofocus>
                     <div class="input-group-append">
@@ -49,7 +49,7 @@
                         type="password"
                         name="password"
                         class="form-control @error('password') is-invalid @enderror"
-                        placeholder="Nueva contraseña">
+                        placeholder="{{ __('app.new_password_placeholder') }}">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
@@ -65,7 +65,7 @@
                         type="password"
                         name="password_confirmation"
                         class="form-control"
-                        placeholder="Confirmar nueva contraseña">
+                        placeholder="{{ __('app.confirm_new_password') }}">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
@@ -74,7 +74,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">
-                    Restablecer contraseña
+                    {{ __('app.reset_submit') }}
                 </button>
             </form>
 

@@ -41,7 +41,7 @@ class BudgetController extends Controller
 
         return redirect()
             ->route('budgets.index')
-            ->with('success', 'Presupuesto creado correctamente.');
+            ->with('success', __('app.budget_stored'));
     }
 
     public function edit(Budget $budget)
@@ -62,7 +62,7 @@ class BudgetController extends Controller
 
         return redirect()
             ->route('budgets.index')
-            ->with('success', 'Presupuesto actualizado correctamente.');
+            ->with('success', __('app.budget_updated'));
     }
 
     public function destroy(Budget $budget)
@@ -73,6 +73,6 @@ class BudgetController extends Controller
 
         return redirect()
             ->route('budgets.index')
-            ->with('success', 'Presupuesto eliminado correctamente.');
+            ->with('success', __('app.budget_deleted'));
     }
 }

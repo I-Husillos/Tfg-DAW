@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Editar presupuesto')
+@section('title', __('app.edit_budget'))
 
 @push('breadcrumb')
 <li class="breadcrumb-item">
-    <a href="{{ route('budgets.index') }}">Presupuestos</a>
+    <a href="{{ route('budgets.index') }}">{{ __('app.budgets') }}</a>
 </li>
-<li class="breadcrumb-item active">Editar</li>
+<li class="breadcrumb-item active">{{ __('app.edit') }}</li>
 @endpush
 
 @section('content')
@@ -14,7 +14,7 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">
-            <i class="fas fa-edit mr-1"></i> Editar presupuesto
+            <i class="fas fa-edit mr-1"></i> {{ __('app.edit_budget') }}
         </h3>
     </div>
     <form action="{{ route('budgets.update', $budget) }}" method="POST">
@@ -26,11 +26,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="category_id">
-                            Categoría <span class="text-danger">*</span>
+                            {{ __('app.label_category') }} <span class="text-danger">*</span>
                         </label>
                         <select name="category_id" id="category_id"
                             data-category-select
-                            data-placeholder="Buscar categoría..."
+                            data-placeholder="{{ __('app.search_category') }}"
                             class="form-control @error('category_id') is-invalid @enderror">
                             @foreach($categories as $category)
                             <option value="{{ $category->id }}"
@@ -48,7 +48,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="limit_amount">
-                            Límite de gasto <span class="text-danger">*</span>
+                            {{ __('app.label_limit_amount') }} <span class="text-danger">*</span>
                         </label>
                         <div class="input-group">
                             <input type="number" name="limit_amount" id="limit_amount"
@@ -68,7 +68,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="period_year">
-                            Año <span class="text-danger">*</span>
+                            {{ __('app.label_year') }} <span class="text-danger">*</span>
                         </label>
                         <input type="number" name="period_year" id="period_year"
                             class="form-control @error('period_year') is-invalid @enderror"
@@ -83,7 +83,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="period_month">
-                            Mes <span class="text-danger">*</span>
+                            {{ __('app.label_month') }} <span class="text-danger">*</span>
                         </label>
                         <select name="period_month" id="period_month"
                             class="form-control @error('period_month') is-invalid @enderror">
@@ -102,7 +102,7 @@
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="alert_threshold">Umbral de alerta</label>
+                        <label for="alert_threshold">{{ __('app.label_alert_threshold') }}</label>
                         <div class="input-group">
                             <input type="number" name="alert_threshold"
                                 id="alert_threshold"
@@ -123,10 +123,10 @@
         </div>
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save mr-1"></i> Guardar cambios
+                <i class="fas fa-save mr-1"></i> {{ __('app.save_changes') }}
             </button>
             <a href="{{ route('budgets.index') }}" class="btn btn-secondary ml-2">
-                Cancelar
+                {{ __('app.cancel') }}
             </a>
         </div>
     </form>
