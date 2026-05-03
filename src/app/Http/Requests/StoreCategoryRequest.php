@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -35,6 +36,25 @@ class StoreCategoryRequest extends FormRequest
                 Rule::exists('categories', 'id')->where(
                     fn($query) => $query->where('user_id', auth()->id())
                 ),
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (!$value) {
+                        return;
+                    }
+
+                    $parent = Category::where('user_id', auth()->id())->find($value);
+                    if (!$parent) {
+                        return;
+                    }
+
+                    if (!is_null($parent->parent_id)) {
+                        $fail(__('app.val_category_parent_exists'));
+                        return;
+                    }
+
+                    if ($this->input('type') && $parent->type !== $this->input('type')) {
+                        $fail(__('app.val_category_type_in'));
+                    }
+                },
             ],
         ];
     }

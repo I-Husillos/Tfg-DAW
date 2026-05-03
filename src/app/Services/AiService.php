@@ -23,17 +23,17 @@ class AiService
     public function __construct()
     {
         $this->ollamaUrl   = env('OLLAMA_URL', env('OLLAMA_HOST', 'http://service-ollama:11434'));
-        $this->ollamaModel = env('OLLAMA_MODEL', 'llama3.2:1b');
+        $this->ollamaModel = env('OLLAMA_MODEL', 'llama3.2:3b');
     }
 
-    public function ask(string $question, array $history = []): ?string
+    public function ask(string $question, array $history = [], string $currentPage = ''): ?string
     {
         if (!Auth::user()) {
             return null;
         }
 
         $context  = $this->buildFinancialContext($question);
-        $messages = $this->buildMessages($context, $question, $history);
+        $messages = $this->buildMessages($context, $question, $history, $currentPage);
         $response = $this->callOllama($messages);
 
         if (!$response) {
@@ -228,16 +228,31 @@ class AiService
         return (bool) preg_match($listingPattern, $normalized);
     }
 
-    private function buildMessages(array $context, string $question, array $history = []): array
+    private function buildMessages(array $context, string $question, array $history = [], string $currentPage = ''): array
     {
         $systemRules = [
-            'Eres un asistente financiero de SmartBudget.',
+            'Eres un asistente financiero de SmartBudget. Solo puedes consultar y analizar datos, NO puedes crear, modificar ni eliminar nada en la base de datos.',
+            'Si el usuario pide agregar, crear, editar o borrar una transaccion, presupuesto, categoria u otro dato, explica que no tienes esa capacidad y dirigele a la seccion correspondiente de la aplicacion.',
             'Responde de forma natural, directa y util para la pregunta del usuario.',
             'No uses plantillas rigidas ni repitas bloques de datos si no lo piden.',
             'Si faltan datos para responder con precision, dilo claramente.',
             'No inventes transacciones, importes o fechas fuera del contexto recibido.',
             'Cuando el usuario pida listados, devuelve una lista ordenada y legible.',
+            'Tambien puedes ayudar al usuario a entender como funciona la aplicacion si te lo pide.',
             'Idioma de respuesta: espanol.',
+        ];
+
+        $appGuide = [
+            'La barra lateral izquierda de SmartBudget tiene exactamente estos elementos de menu (usa estos nombres exactos, no inventes otros):',
+            '- "Dashboard": resumen del mes actual con ingresos, gastos, balance y alertas de presupuesto.',
+            '- "Transacciones": listado de todos los movimientos. Desde aqui se pueden ver, crear (boton Nueva transaccion), editar y eliminar transacciones.',
+            '- "Categorias": gestion de categorias propias para clasificar transacciones.',
+            '- "Presupuestos": definir limites de gasto mensual por categoria.',
+            '- "Informes": graficos y estadisticas por periodo y categoria.',
+            '- "Mi perfil": datos personales, moneda preferida, idioma, zona horaria y cambio de contrasena.',
+            'Para crear una transaccion: ir a "Transacciones" en el menu lateral y pulsar el boton "Nueva transaccion".',
+            'Para crear una categoria: ir a "Categorias" en el menu lateral.',
+            'Para crear un presupuesto: ir a "Presupuestos" en el menu lateral.',
         ];
 
         $messages = [
@@ -247,9 +262,20 @@ class AiService
             ],
             [
                 'role' => 'system',
+                'content' => implode("\n", $appGuide),
+            ],
+            [
+                'role' => 'system',
                 'content' => 'Contexto financiero disponible (JSON): ' . json_encode($context, JSON_UNESCAPED_UNICODE),
             ],
         ];
+
+        if ($currentPage !== '') {
+            $messages[] = [
+                'role'    => 'system',
+                'content' => 'El usuario esta actualmente en la pagina: ' . $currentPage,
+            ];
+        }
 
         if (!empty($history)) {
             foreach ($history as $item) {

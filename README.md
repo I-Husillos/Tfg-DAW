@@ -55,10 +55,10 @@ El proyecto es una aplicación web desarrollada con el framework Laravel, utiliz
     *Nota: Asegúrate de configurar las variables de entorno en `src/.env` si necesitas credenciales específicas para la base de datos u otros servicios.*
 
 6.  **Descargar el modelo de IA por defecto (Ollama):**
-    El proyecto usa por defecto `llama3.2:1b` (`OLLAMA_MODEL` en `src/.env`).
+    El proyecto usa por defecto `llama3.2:3b1b` (`OLLAMA_MODEL` en `src/.env`).
     En un equipo nuevo debes descargarlo una vez:
     ```bash
-    docker compose exec service-ollama ollama pull llama3.2:1b
+    docker compose exec service-ollama ollama pull llama3.2:3b1b
     ```
 
 ### Configuración del archivo `.env` de Laravel

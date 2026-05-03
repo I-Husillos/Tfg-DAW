@@ -36,11 +36,26 @@ class CategoryDataController extends Controller
 
     private function transform(Category $c): array
     {
+        $subcategories = $c->children
+            ->map(fn($child) => $child->display_name ?? $child->name)
+            ->join(', ');
+
+        $name = $c->display_name ?? $c->name;
+        if (!is_null($c->parent_id)) {
+            $name = '[Sub] ' . $name;
+        }
+
+        $subcategoriesOrParent = $subcategories !== '' ? $subcategories : '—';
+        if (!is_null($c->parent_id)) {
+            $parentName = $c->parent?->display_name ?? $c->parent?->name ?? '—';
+            $subcategoriesOrParent = 'Subcategoria de: ' . $parentName;
+        }
+
         return [
-            'name'          => $c->display_name ?? $c->name,
+            'name'          => $name,
             'type'          => $c->type === 'income' ? __('app.income') : __('app.expense'),
             'type_raw'      => $c->type,
-            'subcategories' => $c->children->pluck('name')->join(', ') ?: '—',
+            'subcategories' => $subcategoriesOrParent,
             'description'   => $c->description ?? '—',
             'actions'       => $this->actions($c),
         ];
