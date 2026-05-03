@@ -47,6 +47,7 @@
 
 .ai-widget-panel {
     width: 360px;
+    height: 520px;
     background: #fff;
     border-radius: 16px;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
@@ -55,6 +56,12 @@
     overflow: hidden;
     margin-bottom: 12px;
     max-height: 520px;
+}
+
+.ai-widget-panel.is-expanded {
+    width: min(680px, 88vw);
+    height: min(760px, 78vh);
+    max-height: min(760px, 78vh);
 }
 
 .ai-widget-header {
@@ -174,4 +181,23 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    #ai-widget {
+        right: 12px;
+        bottom: 78px;
+    }
+
+    .ai-widget-panel {
+        width: min(94vw, 420px);
+        height: min(520px, 72vh);
+        max-height: min(520px, 72vh);
+    }
+
+    .ai-widget-panel.is-expanded {
+        width: min(96vw, 560px);
+        height: min(680px, 80vh);
+        max-height: min(680px, 80vh);
+    }
 }

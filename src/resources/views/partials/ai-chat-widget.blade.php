@@ -10,6 +10,9 @@
         <div class="ai-widget-header">
             <span><i class="fas fa-robot mr-2"></i> Asistente IA</span>
             <div class="d-flex align-items-center gap-2">
+                <button id="ai-widget-expand" type="button" title="Ampliar chat">
+                    <i id="ai-widget-expand-icon" class="fas fa-expand"></i>
+                </button>
                 <button id="ai-widget-clear" type="button" title="Limpiar chat">
                     <i class="fas fa-trash-alt"></i>
                 </button>

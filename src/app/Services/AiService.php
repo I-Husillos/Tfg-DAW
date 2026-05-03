@@ -5,17 +5,24 @@ namespace App\Services;
 use App\Models\Transaction;
 use App\Models\Budget;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class AiService
 {
+    private const DEFAULT_RECENT_DAYS = 30;
+    private const DEFAULT_RECENT_LIMIT = 50;
+    private const DEFAULT_PROMPT_TRANSACTIONS_LIMIT = 10;
+    private const DEFAULT_HISTORY_LIST_LIMIT = 200;
+    private const DEFAULT_HISTORY_MONTHS_SUMMARY = 24;
+
     protected string $ollamaUrl;
     protected string $ollamaModel;
 
     public function __construct()
     {
-        $this->ollamaUrl   = env('OLLAMA_URL', 'http://service-ollama:11434');
+        $this->ollamaUrl   = env('OLLAMA_URL', env('OLLAMA_HOST', 'http://service-ollama:11434'));
         $this->ollamaModel = env('OLLAMA_MODEL', 'llama3.2:1b');
     }
 
@@ -25,9 +32,9 @@ class AiService
             return null;
         }
 
-        $context  = $this->buildFinancialContext();
-        $prompt   = $this->buildPrompt($context, $question, $history);
-        $response = $this->callOllama($prompt);
+        $context  = $this->buildFinancialContext($question);
+        $messages = $this->buildMessages($context, $question, $history);
+        $response = $this->callOllama($messages);
 
         if (!$response) {
             return null;
@@ -36,16 +43,30 @@ class AiService
         return $response;
     }
 
-    private function buildFinancialContext(): array
+    private function buildFinancialContext(string $question): array
     {
         $userId = Auth::id();
+        $scope  = $this->resolveScope($question);
+        $wantsExpenseListing = $this->asksForExpenseListing($question);
 
-        $startDate    = now()->subDays(30);
+        if ($scope === 'historical' || $wantsExpenseListing) {
+            return $this->buildHistoricalContext($userId, $wantsExpenseListing);
+        }
+
+        return $this->buildRecentContext($userId);
+    }
+
+    private function buildRecentContext(int $userId): array
+    {
+        $recentDays  = (int) env('AI_RECENT_DAYS', self::DEFAULT_RECENT_DAYS);
+        $recentLimit = (int) env('AI_RECENT_LIMIT', self::DEFAULT_RECENT_LIMIT);
+
+        $startDate    = now()->subDays(max($recentDays, 1));
         $transactions = Transaction::where('user_id', $userId)
             ->where('date', '>=', $startDate)
             ->with('category')
             ->orderBy('date', 'desc')
-            ->limit(50)
+            ->limit(max($recentLimit, 1))
             ->get();
 
         $expensesByCategory = $transactions
@@ -84,72 +105,180 @@ class AiService
             ])
             ->toArray();
 
+        $promptTransactionsLimit = (int) env('AI_PROMPT_TRANSACTIONS_LIMIT', self::DEFAULT_PROMPT_TRANSACTIONS_LIMIT);
+
         return [
+            'scope'               => 'recent',
             'total_income'        => $totalIncome,
             'total_expense'       => $totalExpense,
             'balance'             => $totalIncome - $totalExpense,
             'expenses_top'        => $expensesByCategory,
             'budgets'             => $budgets,
-            'recent_transactions' => $transactions->take(10)->map(fn($t) => [
+            'recent_transactions' => $transactions->take(max($promptTransactionsLimit, 1))->map(fn($t) => [
                 'date'     => $t->date->format('d/m/Y'),
                 'amount'   => $t->amount,
                 'type'     => $t->type,
                 'category' => $t->category?->name ?? __('app.ai_no_category'),
                 'name'     => $t->name ?? $t->merchant ?? '',
             ])->toArray(),
+            'period_label'        => 'Mes actual',
         ];
     }
 
-    private function buildPrompt(array $context, string $question, array $history = []): string
+    private function buildHistoricalContext(int $userId, bool $includeExpenseListing = false): array
     {
-        $text  = __('app.ai_prompt_intro') . "\n";
+        $monthsSummary = (int) env('AI_HISTORY_MONTHS_SUMMARY', self::DEFAULT_HISTORY_MONTHS_SUMMARY);
+        $monthsSummary = max($monthsSummary, 1);
+        $listLimit = max((int) env('AI_HISTORY_LIST_LIMIT', self::DEFAULT_HISTORY_LIST_LIMIT), 50);
 
-        $text .= __('app.ai_prompt_user_data') . "\n";
-        $text .= "- " . __('app.ai_prompt_income') . ": {$context['total_income']} €\n";
-        $text .= "- " . __('app.ai_prompt_expense') . ": {$context['total_expense']} €\n";
-        $text .= "- " . __('app.ai_prompt_balance') . ": {$context['balance']} €\n\n";
+        $cacheKey = sprintf(
+            'ai:historical_context:%d:%d:%d',
+            $userId,
+            $monthsSummary,
+            $includeExpenseListing ? 1 : 0
+        );
 
-        $text .= __('app.ai_prompt_top_expenses') . "\n";
-        foreach ($context['expenses_top'] as $cat => $amount) {
-            $text .= "- {$cat}: {$amount} €\n";
-        }
+        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($userId, $monthsSummary, $includeExpenseListing, $listLimit) {
+            $totalIncome = Transaction::where('user_id', $userId)
+                ->where('type', 'income')
+                ->sum('amount');
 
-        if (!empty($context['budgets'])) {
-            $text .= "\n" . __('app.ai_prompt_budgets') . "\n";
-            foreach ($context['budgets'] as $budget) {
-                $text .= "- {$budget['category']}: {$budget['spent']} € de {$budget['limit']} € ({$budget['percentage']}%)\n";
+            $totalExpense = Transaction::where('user_id', $userId)
+                ->where('type', 'expense')
+                ->sum('amount');
+
+            $expensesByCategory = Transaction::where('user_id', $userId)
+                ->where('type', 'expense')
+                ->with('category')
+                ->orderBy('date', 'desc')
+                ->limit(1000)
+                ->get()
+                ->groupBy(fn($t) => $t->category?->name ?? __('app.ai_no_category'))
+                ->map(fn($group) => $group->sum('amount'))
+                ->sortDesc()
+                ->take(8)
+                ->toArray();
+
+            $recentTransactionsQuery = Transaction::where('user_id', $userId)
+                ->with('category')
+                ->orderBy('date', 'desc');
+
+            if ($includeExpenseListing) {
+                $recentTransactionsQuery->where('type', 'expense');
             }
-        }
 
-        if (!empty($context['recent_transactions'])) {
-            $text .= "\n" . __('app.ai_prompt_recent') . "\n";
-            foreach ($context['recent_transactions'] as $t) {
-                $sign  = $t['type'] === 'income' ? '+' : '-';
-                $text .= "- {$t['date']}: {$t['name']} {$sign}{$t['amount']} € ({$t['category']})\n";
-            }
-        }
+            $recentTransactions = $recentTransactionsQuery
+                ->limit($includeExpenseListing ? $listLimit : 20)
+                ->get()
+                ->map(fn($t) => [
+                    'date'     => $t->date->format('d/m/Y'),
+                    'amount'   => $t->amount,
+                    'type'     => $t->type,
+                    'category' => $t->category?->name ?? __('app.ai_no_category'),
+                    'name'     => $t->name ?? $t->merchant ?? '',
+                ])
+                ->toArray();
 
-        if (!empty($history)) {
-            $text .= "\n" . __('app.ai_prompt_history') . "\n";
-            foreach ($history as $item) {
-                $prefix = $item['role'] === 'user'
-                    ? __('app.ai_prompt_user_prefix')
-                    : __('app.ai_prompt_assistant_prefix');
-                $text  .= "{$prefix}: {$item['content']}\n";
-            }
-        }
+            $monthlySummary = Transaction::where('user_id', $userId)
+                ->selectRaw('YEAR(date) as year, MONTH(date) as month')
+                ->selectRaw("SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income")
+                ->selectRaw("SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense")
+                ->groupByRaw('YEAR(date), MONTH(date)')
+                ->orderByRaw('YEAR(date) DESC, MONTH(date) DESC')
+                ->limit($monthsSummary)
+                ->get()
+                ->map(fn($row) => [
+                    'period'  => sprintf('%02d/%04d', (int) $row->month, (int) $row->year),
+                    'income'  => (float) $row->income,
+                    'expense' => (float) $row->expense,
+                    'balance' => (float) $row->income - (float) $row->expense,
+                ])
+                ->toArray();
 
-        $text .= "\n" . __('app.ai_prompt_question') . "\n{$question}\n";
-
-        return $text;
+            return [
+                'scope'               => 'historical',
+                'total_income'        => $totalIncome,
+                'total_expense'       => $totalExpense,
+                'balance'             => $totalIncome - $totalExpense,
+                'expenses_top'        => $expensesByCategory,
+                'budgets'             => [],
+                'recent_transactions' => $recentTransactions,
+                'monthly_summary'     => $monthlySummary,
+                'period_label'        => 'Historico completo',
+                'requested_listing'   => $includeExpenseListing,
+            ];
+        });
     }
 
-    private function callOllama(string $prompt): ?string
+    private function resolveScope(string $question): string
+    {
+        $normalized = mb_strtolower($question);
+
+        $historicalPattern = '/(todos|todas|hist[oó]rico|anteriores|desde.*inicio|desde siempre|todo el tiempo|a[ñn]os?|meses? anteriores)/u';
+
+        return preg_match($historicalPattern, $normalized) ? 'historical' : 'recent';
+    }
+
+    private function asksForExpenseListing(string $question): bool
+    {
+        $normalized = mb_strtolower($question);
+
+        $listingPattern = '/(dime.*todos.*gastos|todos.*gastos.*recientes.*antiguos|lista.*gastos|listado.*gastos|enumera.*gastos|mostrar.*gastos.*orden)/u';
+
+        return (bool) preg_match($listingPattern, $normalized);
+    }
+
+    private function buildMessages(array $context, string $question, array $history = []): array
+    {
+        $systemRules = [
+            'Eres un asistente financiero de SmartBudget.',
+            'Responde de forma natural, directa y util para la pregunta del usuario.',
+            'No uses plantillas rigidas ni repitas bloques de datos si no lo piden.',
+            'Si faltan datos para responder con precision, dilo claramente.',
+            'No inventes transacciones, importes o fechas fuera del contexto recibido.',
+            'Cuando el usuario pida listados, devuelve una lista ordenada y legible.',
+            'Idioma de respuesta: espanol.',
+        ];
+
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => implode("\n", $systemRules),
+            ],
+            [
+                'role' => 'system',
+                'content' => 'Contexto financiero disponible (JSON): ' . json_encode($context, JSON_UNESCAPED_UNICODE),
+            ],
+        ];
+
+        if (!empty($history)) {
+            foreach ($history as $item) {
+                if (!isset($item['role'], $item['content'])) {
+                    continue;
+                }
+
+                $role = $item['role'] === 'assistant' ? 'assistant' : 'user';
+                $messages[] = [
+                    'role' => $role,
+                    'content' => (string) $item['content'],
+                ];
+            }
+        }
+
+        $messages[] = [
+            'role' => 'user',
+            'content' => $question,
+        ];
+
+        return $messages;
+    }
+
+    private function callOllama(array $messages): ?string
     {
         try {
-            $response = Http::timeout(60)->post("{$this->ollamaUrl}/api/generate", [
+            $response = Http::timeout(60)->post("{$this->ollamaUrl}/api/chat", [
                 'model'  => $this->ollamaModel,
-                'prompt' => $prompt,
+                'messages' => $messages,
                 'stream' => false,
             ]);
 
@@ -161,7 +290,7 @@ class AiService
                 return null;
             }
 
-            return $response->json('response');
+            return $response->json('message.content');
         } catch (\Exception $e) {
             Log::error('Ollama exception', ['message' => $e->getMessage()]);
             return null;

@@ -71,6 +71,13 @@ El proyecto es una aplicación web desarrollada con el framework Laravel, utiliz
     O puedes simplemente copiar el archivo mediante interfaz con click derecho si no quieres utilizar comandos.
     *Nota: Asegúrate de configurar las variables de entorno en `src/.env` si necesitas credenciales específicas para la base de datos u otros servicios.*
 
+6.  **Descargar el modelo de IA por defecto (Ollama):**
+    El proyecto usa por defecto `llama3.2:1b` (`OLLAMA_MODEL` en `src/.env`).
+    En un equipo nuevo debes descargarlo una vez:
+    ```bash
+    docker compose exec service-ollama ollama pull llama3.2:1b
+    ```
+
 ### Configuración del archivo `.env` de Laravel
 
 Después de copiar `src/.env.example` a `src/.env`, deberás ajustar algunas variables para que coincidan con la configuración de Docker:
@@ -103,7 +110,7 @@ Después de copiar `src/.env.example` a `src/.env`, deberás ajustar algunas var
 
 Asegúrate de que los valores de `DOCKER_MYSQL_DATABASE`, `DOCKER_MYSQL_USER`, y `DOCKER_MYSQL_PASSWORD` en tu archivo `.env` principal (el del directorio raíz del proyecto) coincidan con los que uses en el `src/.env` de Laravel.
 
-6.  **Ejecutar las migraciones:**
+7.  **Ejecutar las migraciones:**
     Para crear la estructura inicial de la base de datos.
     ```bash
     docker compose exec service-php php artisan migrate

@@ -12,11 +12,14 @@ export function initAiChat() {
     const form     = document.getElementById('ai-widget-form');
     const input    = document.getElementById('ai-widget-input');
     const sendBtn  = document.getElementById('ai-widget-send');
+    const expandBtn = document.getElementById('ai-widget-expand');
+    const expandIcon = document.getElementById('ai-widget-expand-icon');
     const clearBtn = document.getElementById('ai-widget-clear');
     const closeBtn = document.getElementById('ai-widget-close');
     const errorEl  = document.getElementById('ai-widget-error');
 
     let isOpen = false;
+    let isExpanded = false;
 
     // Restaurar historial guardado en sesión al cargar la página.
     // El servidor inyecta el historial como JSON en data-history.
@@ -34,6 +37,21 @@ export function initAiChat() {
             scrollToBottom();
             input.focus();
         }
+    }
+
+    function toggleExpanded() {
+        isExpanded = !isExpanded;
+        panel.classList.toggle('is-expanded', isExpanded);
+
+        if (expandIcon) {
+            expandIcon.className = isExpanded ? 'fas fa-compress' : 'fas fa-expand';
+        }
+
+        if (expandBtn) {
+            expandBtn.title = isExpanded ? 'Reducir chat' : 'Ampliar chat';
+        }
+
+        scrollToBottom();
     }
 
     function addBubble(role, content) {
@@ -92,6 +110,9 @@ export function initAiChat() {
 
     fab.addEventListener('click', togglePanel);
     closeBtn.addEventListener('click', togglePanel);
+    if (expandBtn) {
+        expandBtn.addEventListener('click', toggleExpanded);
+    }
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
