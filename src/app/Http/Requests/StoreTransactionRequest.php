@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreTransactionRequest extends FormRequest
 {
@@ -31,7 +32,12 @@ class StoreTransactionRequest extends FormRequest
 
             // Categoría opcional: si se envía debe existir
             // y pertenecer al usuario autenticado.
-            'category_id' => ['nullable', 'exists:categories,id'],
+            'category_id' => [
+                'nullable',
+                Rule::exists('categories', 'id')->where(
+                    fn($query) => $query->where('user_id', auth()->id())
+                ),
+            ],
 
             'name'        => ['nullable', 'string', 'max:150'],
             'merchant'    => ['nullable', 'string', 'max:150'],

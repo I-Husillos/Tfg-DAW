@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTransactionRequest extends FormRequest
 {
@@ -26,7 +27,12 @@ class UpdateTransactionRequest extends FormRequest
             'amount'      => ['required', 'numeric', 'min:0.01', 'max:9999999999999.99'],
             'currency'    => ['required', 'string', 'size:3'],
             'date'        => ['required', 'date', 'before_or_equal:tomorrow'],
-            'category_id' => ['nullable', 'exists:categories,id'],
+            'category_id' => [
+                'nullable',
+                Rule::exists('categories', 'id')->where(
+                    fn($query) => $query->where('user_id', auth()->id())
+                ),
+            ],
             'name'        => ['nullable', 'string', 'max:150'],
             'merchant'    => ['nullable', 'string', 'max:150'],
             'description' => ['nullable', 'string', 'max:1000'],

@@ -19,7 +19,7 @@ class TransactionService
      * No necesitas instanciarlo manualmente en ningún sitio.
      */
     public function __construct(
-        private BudgetNotificationServise $budgetNotificationService
+        private BudgetNotificationService $budgetNotificationService
     ) {}
 
     /**

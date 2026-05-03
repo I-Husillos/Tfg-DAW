@@ -16,7 +16,7 @@ class AiService
     public function __construct()
     {
         $this->ollamaUrl   = env('OLLAMA_URL', 'http://service-ollama:11434');
-        $this->ollamaModel = env('OLLAMA_MODEL', 'phi3:mini');
+        $this->ollamaModel = env('OLLAMA_MODEL', 'llama3.2:1b');
     }
 
     public function ask(string $question, array $history = []): ?string

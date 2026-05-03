@@ -3,6 +3,7 @@
     id="ai-widget"
     data-ask-url="{{ route('ai.ask') }}"
     data-clear-url="{{ route('ai.clear') }}"
+    data-history="{{ json_encode(session('ai_chat_history', [])) }}"
 >
     {{-- Panel del chat --}}
     <div id="ai-widget-panel" class="ai-widget-panel" style="display:none;">

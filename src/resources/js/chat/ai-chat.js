@@ -18,6 +18,14 @@ export function initAiChat() {
 
     let isOpen = false;
 
+    // Restaurar historial guardado en sesión al cargar la página.
+    // El servidor inyecta el historial como JSON en data-history.
+    // Así, al navegar entre páginas, el chat no aparece vacío.
+    try {
+        const history = JSON.parse(widget.dataset.history || '[]');
+        history.forEach(item => addBubble(item.role, item.content));
+    } catch (e) { /* JSON malformado: ignorar y empezar vacío */ }
+
     function togglePanel() {
         isOpen = !isOpen;
         panel.style.display = isOpen ? 'flex' : 'none';

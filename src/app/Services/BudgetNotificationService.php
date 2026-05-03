@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 /**
  * Servicio responsable de DETECTAR y NOTIFICAR alertas de presupuesto.
  */
-class BudgetNotificationServise
+class BudgetNotificationService
 {
     /**
      * Comprueba todos los presupuestos del usuario autenticado para el
