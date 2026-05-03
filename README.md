@@ -45,23 +45,6 @@ El proyecto es una aplicación web desarrollada con el framework Laravel, utiliz
     docker compose exec service-php npm ci
     ```
 
-    No es necesario ejecutar manualmente comandos como:
-    ```bash
-    npm install --legacy-peer-deps datatables.net datatables.net-bs4 datatables.net-responsive datatables.net-responsive-bs4 jquery chart.js
-    npm install --legacy-peer-deps jquery@3.7.1
-    ```
-    Esos paquetes ya se instalan automáticamente con `npm ci`.
-
-    Si prefieres desarrollo con recarga en caliente:
-    ```bash
-    docker compose exec service-php npm run dev -- --host
-    ```
-
-    Si prefieres compilar assets para producción:
-    ```bash
-    docker compose exec service-php npm run build
-    ```
-
 5.  **Configurar el archivo de entorno:**
     Copia el archivo de ejemplo `.env.example` que se encuentra en `src/` y genera la clave de la aplicación.
     ```bash
