@@ -1,135 +1,178 @@
-# TFG-DAW - Proyecto Fin de Grado
+# SmartBudget — TFG DAW
 
-Este repositorio contiene el código fuente para el Proyecto de Fin de Grado del ciclo formativo de Desarrollo de Aplicaciones Web (DAW).
+Aplicación web de gestión financiera personal desarrollada como Proyecto de Fin de Grado del ciclo formativo de Desarrollo de Aplicaciones Web (DAW).
 
-## Descripción
+SmartBudget permite registrar ingresos y gastos, organizar categorías, definir presupuestos mensuales con alertas automáticas y consultar informes visuales. Incluye un asistente de IA integrado (Ollama) que responde preguntas sobre los datos financieros del usuario y ayuda a navegar la aplicación.
 
-El proyecto es una aplicación web desarrollada con el framework Laravel, utilizando Docker para la gestión del entorno de desarrollo.
+## Stack tecnológico
 
-## Stack Tecnológico
+| Capa | Tecnología |
+|---|---|
+| Backend | PHP 8 / Laravel 11 |
+| Frontend | Blade + AdminLTE, Vite, Chart.js, DataTables |
+| Base de datos | MySQL 8 |
+| Caché / Colas | Redis |
+| Servidor web | Apache |
+| IA local | Ollama (`llama3.2:3b`) |
+| Correo (dev) | Mailpit |
+| Contenerización | Docker & Docker Compose |
 
-*   **Backend:** PHP / Laravel
-*   **Frontend:** Blade, CSS, JavaScript
-*   **Base de Datos:** MySQL
-*   **Servidor Web:** Apache
-*   **Contenerización:** Docker & Docker Compose
+## Servicios y puertos
 
-## Requisitos Previos
+| Servicio | URL / Puerto |
+|---|---|
+| Aplicación web | http://localhost:8080 |
+| phpMyAdmin | http://localhost:8081 |
+| Mailpit (bandeja dev) | http://localhost:8025 |
+| MySQL | localhost:3306 |
+| Redis | localhost:6379 |
+| Ollama API | localhost:11434 |
 
-*   [Docker](https://www.docker.com/get-started)
-*   [Docker Compose](https://docs.docker.com/compose/install/)
+> Los puertos son configurables desde el archivo `.env` en la raíz del proyecto.
 
-## Instalación y Puesta en Marcha
+## Requisitos previos
 
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone <URL-del-repositorio>
-    cd TFG-DAW
-    ```
+- [Docker](https://www.docker.com/get-started) (con Compose v2)
 
-2.  **Levantar los contenedores:**
-    El proyecto utiliza Docker para gestionar el entorno. Ejecuta el siguiente comando para construir y levantar los contenedores en segundo plano:
-    ```bash
-    docker compose up -d --build
-    ```
+No se necesita PHP, Node ni Composer instalados localmente. Todo corre dentro de los contenedores.
 
-3.  **Instalar dependencias de PHP:**
-    Accede al contenedor de la aplicación (`app`) y ejecuta Composer para instalar las dependencias de Laravel.
-    ```bash
-    docker compose run --rm service-composer install
-    ```
+---
 
-4.  **Instalar dependencias frontend (Node/Vite):**
-    Las dependencias necesarias (incluyendo `datatables`, `jquery` y `chart.js`) ya están declaradas en `src/package.json` y bloqueadas en `src/package-lock.json`, por lo que no hace falta ejecutar instalaciones manuales de paquetes uno a uno.
-    ```bash
-    docker compose exec service-php npm ci
-    ```
+## Instalación y puesta en marcha
 
-5.  **Configurar el archivo de entorno:**
-    Copia el archivo de ejemplo `.env.example` que se encuentra en `src/` y genera la clave de la aplicación.
-    ```bash
-    docker compose exec service-php cp .env.example .env
-    docker compose exec service-php php artisan key:generate
-    ```
-    O puedes simplemente copiar el archivo mediante interfaz con click derecho si no quieres utilizar comandos.
-    *Nota: Asegúrate de configurar las variables de entorno en `src/.env` si necesitas credenciales específicas para la base de datos u otros servicios.*
+### 1. Clonar el repositorio
 
-6.  **Descargar el modelo de IA por defecto (Ollama):**
-    El proyecto usa por defecto `llama3.2:3b1b` (`OLLAMA_MODEL` en `src/.env`).
-    En un equipo nuevo debes descargarlo una vez:
-    ```bash
-    docker compose exec service-ollama ollama pull llama3.2:3b1b
-    ```
+```bash
+git clone <URL-del-repositorio>
+cd TFG-DAW
+```
 
-### Configuración del archivo `.env` de Laravel
+### 2. Levantar los contenedores
 
-Después de copiar `src/.env.example` a `src/.env`, deberás ajustar algunas variables para que coincidan con la configuración de Docker:
+```bash
+docker compose up -d --build
+```
 
-**Configuración de Base de Datos (MySQL):**
+Esto arranca todos los servicios: PHP, Apache, MySQL, Redis, Ollama, Mailpit y phpMyAdmin.
 
-*   `DB_CONNECTION=mysql`
-*   `DB_HOST=service-mysql` (Este es el nombre del servicio MySQL en `docker-compose.yml`)
-*   `DB_PORT=3306`
-*   `DB_DATABASE=baseDatosMysql`
-*   `DB_USERNAME=user`
-*   `DB_PASSWORD=1234`
+### 3. Instalar dependencias de PHP
 
-**Configuración de Cache/Queue (Redis):**
+```bash
+docker compose run --rm service-composer install
+```
 
-*   `REDIS_HOST=service-redis` (Este es el nombre del servicio Redis en `docker-compose.yml`)
-*   `REDIS_PASSWORD=null` (Si no has configurado una contraseña para Redis)
-*   `REDIS_PORT=6379`
+### 4. Configurar el entorno de Laravel
 
-**Configuración de Correo Electrónico (Mailpit):**
+```bash
+docker compose exec service-php cp .env.example .env
+docker compose exec service-php php artisan key:generate
+```
 
-*   `MAIL_MAILER=smtp`
-*   `MAIL_HOST=service-mailpit` (Este es el nombre del servicio Mailpit en `docker-compose.yml`)
-*   `MAIL_PORT=1025`
-*   `MAIL_USERNAME=null`
-*   `MAIL_PASSWORD=null`
-*   `MAIL_ENCRYPTION=null`
-*   `MAIL_FROM_ADDRESS="hello@example.com"`
-*   `MAIL_FROM_NAME="${APP_NAME}"`
+El `.env.example` ya viene preconfigurado para el entorno Docker (hosts, puertos, credenciales). En la mayoría de casos no es necesario modificar nada más.
 
-Asegúrate de que los valores de `DOCKER_MYSQL_DATABASE`, `DOCKER_MYSQL_USER`, y `DOCKER_MYSQL_PASSWORD` en tu archivo `.env` principal (el del directorio raíz del proyecto) coincidan con los que uses en el `src/.env` de Laravel.
+### 5. Instalar dependencias frontend y compilar assets
 
-7.  **Ejecutar las migraciones:**
-    Para crear la estructura inicial de la base de datos.
-    ```bash
-    docker compose exec service-php php artisan migrate
-    ```
+```bash
+docker compose exec service-php npm ci
+docker compose exec service-php npm run build
+```
 
-Una vez completados estos pasos, la aplicación debería estar accesible en `http://localhost` (o el puerto que hayas configurado en `docker-compose.yml`).
+### 6. Ejecutar las migraciones
 
-## Estructura del Proyecto
+```bash
+docker compose exec service-php php artisan migrate
+```
 
--   `.docker/`: Contiene los Dockerfiles y configuraciones para los servicios (Apache, PHP-FPM, Supervisor).
--   `src/`: Contiene el código fuente completo de la aplicación Laravel.
--   `docker-compose.yml`: Archivo principal que orquesta el levantamiento de los contenedores de desarrollo.
--   `.env`: Archivo de configuración principal de docker-compose.
+Opcionalmente, poblar la base de datos con datos de prueba:
 
-## Estructura de la Base de Datos
+```bash
+docker compose exec service-php php artisan db:seed
+```
 
-La aplicación Laravel utiliza los siguientes modelos y migraciones para definir la estructura de la base de datos.
+### 7. Descargar el modelo de IA (Ollama)
 
-### Modelos
+El asistente de IA requiere descargar el modelo una sola vez:
 
-Los modelos de Eloquent se encuentran en `src/app/Models/`:
+```bash
+docker compose exec service-ollama ollama pull llama3.2:3b
+```
 
--   `User.php`: Modelo para los usuarios.
--   `Account.php`: Modelo para las cuentas de los usuarios.
--   `Category.php`: Modelo para las categorías de las transacciones.
--   `Transaction.php`: Modelo para las transacciones.
+> El modelo ocupa ~2 GB. El asistente funciona completamente en local, sin conexión a servicios externos.
 
-### Migraciones y Tablas
+La aplicación estará disponible en **http://localhost:8080**.
 
-Las migraciones de la base de datos se encuentran en `src/database/migrations/` y definen las siguientes tablas:
+---
 
--   `users`: Almacena la información de los usuarios.
--   `accounts`: Almacena las cuentas bancarias asociadas a los usuarios.
--   `categories`: Define las categorías para clasificar las transacciones (ej. "Comida", "Transporte").
--   `transactions`: Contiene los registros de ingresos y gastos.
--   `budgets`: Almacena los presupuestos mensuales o periódicos para diferentes categorías.
--   `imports`: Registra las importaciones de datos (ej. desde un extracto bancario).
--   `audit_logs`: Guarda un historial de acciones importantes realizadas en el sistema.
--   `cache`, `jobs`: Tablas auxiliares gestionadas por Laravel.
+## Configuración del `.env` de Laravel
+
+El archivo `src/.env.example` ya contiene todos los valores necesarios para el entorno Docker. Estos son los más relevantes si necesitas ajustarlos:
+
+**Base de datos (MySQL)**
+```
+DB_CONNECTION=mysql
+DB_HOST=service-mysql
+DB_PORT=3306
+DB_DATABASE=baseDatosMysql
+DB_USERNAME=user
+DB_PASSWORD=1234
+```
+
+**Caché y colas (Redis)**
+```
+REDIS_HOST=service-redis
+REDIS_PORT=6379
+```
+
+**Correo (Mailpit — solo desarrollo)**
+```
+MAIL_MAILER=smtp
+MAIL_HOST=service-mailpit
+MAIL_PORT=1025
+```
+
+**IA (Ollama)**
+```
+OLLAMA_HOST=http://service-ollama:11434
+OLLAMA_MODEL=llama3.2:3b
+```
+
+> Las credenciales de MySQL en `src/.env` deben coincidir con las del `.env` raíz del proyecto (variables `DOCKER_MYSQL_*`).
+
+---
+
+## Estructura del proyecto
+
+```
+TFG-DAW/
+├── docker-compose.yml          # Orquestación de servicios
+├── .env                        # Variables de Docker (puertos, credenciales)
+├── .docker/                    # Dockerfiles y configuración de servicios
+└── src/                        # Código fuente Laravel
+    ├── app/
+    │   ├── Http/Controllers/   # Controladores web y API
+    │   ├── Models/             # Modelos Eloquent
+    │   ├── Services/           # Lógica de negocio (SRP)
+    │   └── Notifications/      # Notificaciones de alertas
+    ├── database/
+    │   └── migrations/         # Estructura de la base de datos
+    ├── resources/
+    │   ├── views/              # Vistas Blade
+    │   ├── js/                 # JavaScript (DataTables, charts, chat IA)
+    │   └── lang/               # Traducciones (es / en)
+    └── routes/
+        ├── web.php             # Rutas web
+        └── api.php             # Rutas API (DataTables)
+```
+
+## Base de datos
+
+| Tabla | Descripción |
+|---|---|
+| `users` | Credenciales de autenticación |
+| `profiles` | Datos personales y preferencias (moneda, idioma, zona horaria) |
+| `categories` | Categorías y subcategorías del usuario |
+| `transactions` | Registros de ingresos y gastos |
+| `budgets` | Límites de gasto mensuales por categoría |
+| `audit_logs` | Historial de acciones (creación, edición, eliminación) |
+| `cache`, `jobs` | Tablas auxiliares de Laravel |
+
