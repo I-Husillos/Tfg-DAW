@@ -30,6 +30,13 @@
                 </select>
             </div>
             <div class="col-md-3 col-sm-6 mb-2">
+                <select id="filter-level" class="form-control">
+                    <option value="">{{ __('app.filter_level_all') }}</option>
+                    <option value="parent">{{ __('app.filter_level_parent') }}</option>
+                    <option value="child">{{ __('app.filter_level_child') }}</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-2">
                 <button id="clear-filters" class="btn btn-secondary btn-block">
                     <i class="fas fa-times mr-1"></i> {{ __('app.filter_clear_filters') }}
                 </button>

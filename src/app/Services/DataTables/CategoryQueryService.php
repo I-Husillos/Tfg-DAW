@@ -27,6 +27,14 @@ class CategoryQueryService extends BaseQueryService
             $query->where('type', $request->input('type'));
         }
 
+        if ($request->filled('level')) {
+            if ($request->input('level') === 'parent') {
+                $query->whereNull('parent_id');
+            } elseif ($request->input('level') === 'child') {
+                $query->whereNotNull('parent_id');
+            }
+        }
+
         $search = $request->input('search.value');
         if ($search) {
             $query->where(function ($q) use ($search) {

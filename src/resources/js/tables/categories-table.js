@@ -25,7 +25,8 @@ export function initCategoriesTable(apiUrl) {
             type: 'GET',
             dataType: 'json',
             data: function (d) {
-                d.type = $('#filter-type').val();
+                d.type  = $('#filter-type').val();
+                d.level = $('#filter-level').val();
             },
             error: function (xhr) {
                 console.error('Error DataTables categories:', xhr.status, xhr.responseText);
@@ -76,8 +77,13 @@ export function initCategoriesTable(apiUrl) {
         tabla.DataTable().ajax.reload();
     });
 
+    $('#filter-level').on('change', function () {
+        tabla.DataTable().ajax.reload();
+    });
+
     $('#clear-filters').on('click', function () {
         $('#filter-type').val('');
+        $('#filter-level').val('');
         tabla.DataTable().search('').ajax.reload();
     });
 }
