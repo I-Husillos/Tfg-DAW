@@ -77,6 +77,11 @@ docker compose exec service-php npm ci
 docker compose exec service-php npm run build
 ```
 
+Si queremos que los cambios se compilen automaticamente sin tener que ejecutar npm run build cada vez que hacemos cambios ejecutamos:
+```bash
+docker compose exec service-php npm run build
+```
+
 ### 6. Ejecutar las migraciones
 
 ```bash
