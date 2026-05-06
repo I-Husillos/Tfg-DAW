@@ -94,6 +94,8 @@ Opcionalmente, poblar la base de datos con datos de prueba:
 docker compose exec service-php php artisan db:seed
 ```
 
+El usuario por defecto al ejecutar los seeders es user@smartbudget.test y su contraseña password
+
 ### 7. Descargar el modelo de IA (Ollama)
 
 El asistente de IA requiere descargar el modelo una sola vez:
