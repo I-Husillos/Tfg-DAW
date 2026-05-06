@@ -105,6 +105,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])
         ->name('reports.export.pdf');
 
+    Route::get('/ai/ask', [AiController::class, 'askGet'])->name('ai.ask.get');
     Route::post('/ai/ask', [AiController::class, 'ask'])->name('ai.ask');
     Route::post('/ai/clear', [AiController::class, 'clear'])->name('ai.clear');
 });

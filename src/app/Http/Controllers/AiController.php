@@ -38,6 +38,12 @@ class AiController extends Controller
         ]);
     }
 
+    public function askGet()
+    {
+        return redirect()->route('dashboard')
+            ->with('error', __('Usa el chat desde la interfaz. La ruta /ai/ask requiere POST.'));
+    }
+
     public function clear()
     {
         session()->forget('ai_chat_history');

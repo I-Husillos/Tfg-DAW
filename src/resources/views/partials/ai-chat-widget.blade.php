@@ -31,7 +31,8 @@
 
         <div id="ai-widget-error" class="ai-widget-error" style="display:none;"></div>
 
-        <form id="ai-widget-form" class="ai-widget-form">
+        <form id="ai-widget-form" class="ai-widget-form" method="POST" action="{{ route('ai.ask') }}">
+            @csrf
             <input
                 id="ai-widget-input"
                 type="text"

@@ -48,7 +48,8 @@
 
                             <div class="card-footer">
                                 <div id="ai-error" class="alert alert-danger mb-2 d-none"></div>
-                                <form id="ai-chat-form" class="d-flex gap-2">
+                                <form id="ai-chat-form" class="d-flex gap-2" method="POST" action="{{ route('ai.ask') }}">
+                                    @csrf
                                     <input
                                         id="ai-message-input"
                                         type="text"
